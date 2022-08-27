@@ -1,24 +1,28 @@
 package it.iacovelli.grocerybe.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionDto implements Serializable {
 
-    private final UUID id;
+    private UUID id;
 
-    private final String vendor;
+    private String vendor;
 
-    private final double quantity;
+    private double quantity;
 
-    private final String unit;
+    private String unit;
 
-    private final double price;
+    private double price;
 
-    private final LocalDate expirationDate;
+    private LocalDate expirationDate;
 
 }

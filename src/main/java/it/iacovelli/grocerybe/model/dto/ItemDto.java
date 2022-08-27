@@ -1,18 +1,22 @@
 package it.iacovelli.grocerybe.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto implements Serializable {
 
-    private final UUID id;
+    private UUID id;
 
-    private final String barcode;
+    private String barcode;
 
-    private final String name;
+    private String name;
 
 }
