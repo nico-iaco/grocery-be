@@ -26,9 +26,11 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
 
     @Override
+    @Transactional
     public TransactionDto addTransaction(TransactionDto transactionDto, UUID itemId) {
         Item item = getItemFromId(itemId);
         Transaction transaction = transactionMapper.dtoToEntity(transactionDto, item);
+        item.getTransactionList().add(transaction);
         return transactionMapper.entityToDto(transactionRepository.save(transaction));
     }
 
@@ -49,11 +51,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @Transactional
     public void deleteItemTransaction(UUID itemId, UUID transactionId) {
         Item item = getItemFromId(itemId);
         Transaction transaction = transactionRepository.findTransactionByIdAndItem(transactionId, item)
                 .orElseThrow(() -> new RuntimeException("The transaction was not found for the item"));
+        item.getTransactionList().remove(transaction);
         transactionRepository.delete(transaction);
+        itemRepository.save(item);
     }
 
     private Item getItemFromId(UUID itemId) {

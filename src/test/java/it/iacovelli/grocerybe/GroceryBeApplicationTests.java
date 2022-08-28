@@ -18,7 +18,9 @@ class GroceryBeApplicationTests {
     private final ItemDto itemDto = new ItemDto(
             null,
             "BARCODE-TEST",
-            "TEST"
+            "TEST",
+            0,
+            ""
     );
 
     private final TransactionDto transactionDto = new TransactionDto(
