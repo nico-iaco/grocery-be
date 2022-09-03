@@ -3,12 +3,13 @@ package it.iacovelli.grocerybe.mapper;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.repository.TransactionRepository;
-import jakarta.transaction.Transactional;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
 
 @Mapper(componentModel = "spring")
 public abstract class ItemMapper {

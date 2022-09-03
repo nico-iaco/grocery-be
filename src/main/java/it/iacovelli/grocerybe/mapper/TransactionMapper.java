@@ -3,7 +3,6 @@ package it.iacovelli.grocerybe.mapper;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.Transaction;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
-import jakarta.transaction.Transactional;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
