@@ -1,8 +1,13 @@
 package it.iacovelli.grocerybe.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +17,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 public class Item {
 
     @Id

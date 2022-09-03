@@ -8,10 +8,10 @@ import it.iacovelli.grocerybe.model.dto.TransactionDto;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.repository.TransactionRepository;
 import it.iacovelli.grocerybe.service.TransactionService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
