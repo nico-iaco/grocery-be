@@ -1,0 +1,16 @@
+namespace: sviluppo
+resources:
+    - ../../base
+commonLabels:
+    app: grocery-be
+configMapGenerator:
+    - name: grocery-be-properties
+      literals:
+          - spring.datasource.url=jdbc:h2:mem:grocery-db
+          - spring.datasource.username=local
+secretGenerator:
+    - name: grocery-be-secrets
+      literals:
+          - spring.datasource.password=password
+patchesStrategicMerge:
+    - deployment_patch.yaml

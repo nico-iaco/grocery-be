@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: grocery-be-deployment
+spec:
+    template:
+        spec:
+            containers:
+                - name: grocery-be-container
+                  image: grocery-be-image
+                  ports:
+                      - containerPort: 8080
+                  livenessProbe:
+                      httpGet:
+                          path: /actuator/health/liveness
+                          port: 8080
+                      initialDelaySeconds: 30
+                  readinessProbe:
+                      httpGet:
+                          path: /actuator/health/readiness
+                          port: 8080
+                      initialDelaySeconds: 30
+                  env:
+                      - name: TZ
+                        value: Europe/Rome
+                  envFrom:
+                      -   configMapRef:
+                              name: grocery-be-properties
+                      -   secretRef:
+                              name: grocery-be-secrets
