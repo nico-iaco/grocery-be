@@ -1,4 +1,4 @@
-namespace: sviluppo
+namespace: grocery
 resources:
     - ../../base
 commonLabels:
