@@ -10,6 +10,6 @@ spec:
                 - name: grocery-be-container
                   resources:
                       limits:
-                          memory: "1024Mi"
-                      requests:
                           memory: "500Mi"
+                      requests:
+                          memory: "256Mi"
