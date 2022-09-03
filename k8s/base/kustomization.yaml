@@ -1,0 +1,8 @@
+resources:
+    - deployment.yaml
+    - service.yaml
+commonLabels:
+    app: grocery-be
+images:
+    - name: grocery-be-image
+      newName: europe-docker.pkg.dev/groupama-corsaro-nero-prod/corsaro-nero-prod-docker-ar/corsaro-nero-rest #FIXME

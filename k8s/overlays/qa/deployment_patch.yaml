@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: corsaro-nero-rest-deployment
+spec:
+    replicas: 1
+    template:
+        spec:
+            containers:
+                - name: grocery-be-container
+                  resources:
+                      limits:
+                          memory: "1024Mi"
+                      requests:
+                          memory: "500Mi"
