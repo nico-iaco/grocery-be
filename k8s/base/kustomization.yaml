@@ -5,4 +5,4 @@ commonLabels:
     app: grocery-be
 images:
     - name: grocery-be-image
-      newName: europe-docker.pkg.dev/groupama-corsaro-nero-prod/corsaro-nero-prod-docker-ar/corsaro-nero-rest #FIXME
+      newName: ghcr.io/nico-iaco/grocery-be
