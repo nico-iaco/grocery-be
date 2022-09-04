@@ -4,6 +4,6 @@ metadata:
     name: grocery-be-service
 spec:
     ports:
-        - port: 80
+        - port: 8000
           targetPort: 8080
     type: NodePort
