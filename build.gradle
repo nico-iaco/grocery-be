@@ -21,14 +21,6 @@ repositories {
     maven { url 'https://repo.spring.io/release' }
 }
 
-bootBuildImage {
-    buildpacks = ["gcr.io/paketo-buildpacks/graalvm", "gcr.io/paketo-buildpacks/java-native-image"]
-    imageName = "iacovelli/grocery-be"
-    environment = [
-            "BP_NATIVE_IMAGE" : "true"
-    ]
-}
-
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-actuator') {
         exclude group: 'io.micrometer', module: 'micrometer-core'
@@ -40,7 +32,8 @@ dependencies {
     }
     implementation "org.apache.tomcat.experimental:tomcat-embed-programmatic:${dependencyManagement.importedProperties["tomcat.version"]}"
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    //annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen:6.1.2.Final'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
+    implementation 'org.springdoc:springdoc-openapi-native:1.6.11'
     implementation 'org.mapstruct:mapstruct:1.5.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
     compileOnly 'org.projectlombok:lombok'
