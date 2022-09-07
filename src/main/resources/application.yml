@@ -9,6 +9,3 @@ spring:
         hibernate:
             ddl-auto: update
         generate-ddl: true
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.PostgreSQLDialect
