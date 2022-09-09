@@ -91,6 +91,17 @@ public class ItemController {
         return new BaseResponse<>(itemTransactions, null);
     }
 
+    @Operation(summary = "Get Transaction detail")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Transaction found")
+    })
+    @GetMapping("/{itemId}/transaction/{transactionId}")
+    public BaseResponse<TransactionDto> getItemTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable UUID itemId,
+                                                    @Parameter(description = "id of the transaction searched") @PathVariable UUID transactionId) {
+        TransactionDto itemTransaction = transactionService.getItemTransaction(itemId, transactionId);
+        return new BaseResponse<>(itemTransaction, null);
+    }
+
     @Operation(summary = "Update a transaction of an item by its id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated")})

@@ -11,6 +11,8 @@ public interface TransactionService {
 
     List<TransactionDto> getItemTransactions(UUID itemId);
 
+    TransactionDto getItemTransaction(UUID itemId, UUID transactionId);
+
     TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto);
 
     void deleteItemTransaction(UUID itemId, UUID transactionId);
