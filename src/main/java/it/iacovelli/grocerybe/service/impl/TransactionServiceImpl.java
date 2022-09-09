@@ -41,6 +41,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public TransactionDto getItemTransaction(UUID itemId, UUID transactionId) {
+        Item item = getItemFromId(itemId);
+        Transaction transaction = transactionRepository.findTransactionByIdAndItem(transactionId, item)
+                .orElseThrow(() -> new RuntimeException("The transaction was not found for the item"));
+        return transactionMapper.entityToDto(transaction);
+    }
+
+    @Override
     @Transactional
     public TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto) {
         Item item = getItemFromId(itemId);
