@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
 import it.iacovelli.grocerybe.model.response.BaseResponse;
@@ -70,6 +71,15 @@ public class ItemController {
     public BaseResponse<String> deleteItem(@Parameter(description = "id of the item to be deleted") @PathVariable UUID id) {
         itemService.deleteItem(id);
         return new BaseResponse<>("Item deleted", null);
+    }
+
+    @Operation(summary = "Get food detail by barcode")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Food detail found")})
+    @GetMapping("/{id}/detail")
+    public BaseResponse<FoodDetailDto> getFoodDetail(@Parameter(description = "id of the item to be searched") @PathVariable UUID id) {
+        FoodDetailDto foodDetail = itemService.getFoodDetail(id);
+        return new BaseResponse<>(foodDetail, null);
     }
 
     @Operation(summary = "Add a new transaction to an item")

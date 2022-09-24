@@ -4,11 +4,14 @@ import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
 import it.iacovelli.grocerybe.exception.ItemNotFoundException;
 import it.iacovelli.grocerybe.mapper.ItemMapper;
 import it.iacovelli.grocerybe.model.Item;
+import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,11 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     private final ItemMapper itemMapper;
+
+    private final RestTemplate restTemplate;
+
+    @Value("${grocery-be.external.food-details-integrator-be.details-path}")
+    private String foodDetailsEndpoint;
 
     @Override
     public ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException {
@@ -55,5 +63,12 @@ public class ItemServiceImpl implements ItemService {
     public void deleteItem(UUID id) throws ItemNotFoundException {
         Item item = itemRepository.findItemById(id).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         itemRepository.delete(item);
+    }
+
+    @Override
+    public FoodDetailDto getFoodDetail(UUID itemId) throws ItemNotFoundException {
+        Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+        FoodDetailDto detailDto = restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode());
+        return detailDto;
     }
 }
