@@ -29,8 +29,10 @@ public abstract class ItemMapper {
     @Transactional
     public void enrichItemDto(Item item, @MappingTarget ItemDto itemDto) {
         double quantity = transactionRepository.sumItemQuantityByItem(item).orElse(0.0);
+        double availableQuantity = transactionRepository.sumItemAvailableQuantityByItem(item).orElse(0.0);
         String unit = transactionRepository.getUnitOfTransaction(item).stream().findFirst().orElse("");
         itemDto.setQuantity(quantity);
+        itemDto.setAvailableQuantity(availableQuantity);
         itemDto.setUnit(unit);
     }
 
