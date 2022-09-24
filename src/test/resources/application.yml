@@ -12,3 +12,8 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.H2Dialect
+grocery-be:
+    external:
+        food-details-integrator-be:
+            base-url: http://localhost:8081
+            details-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}
