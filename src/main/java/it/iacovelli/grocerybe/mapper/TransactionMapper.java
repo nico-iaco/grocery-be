@@ -15,6 +15,6 @@ public interface TransactionMapper {
 
     @Mapping(target = "item", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Transaction updateTransaction(TransactionDto transactionDto, @MappingTarget Transaction transaction);
+    void updateTransaction(TransactionDto transactionDto, @MappingTarget Transaction transaction);
 
 }

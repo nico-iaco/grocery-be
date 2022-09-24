@@ -14,12 +14,12 @@ spec:
                       httpGet:
                           path: /actuator/health
                           port: 8080
-                      initialDelaySeconds: 30
+                      initialDelaySeconds: 10
                   readinessProbe:
                       httpGet:
                           path: /actuator/health
                           port: 8080
-                      initialDelaySeconds: 30
+                      initialDelaySeconds: 10
                   env:
                       - name: TZ
                         value: Europe/Rome

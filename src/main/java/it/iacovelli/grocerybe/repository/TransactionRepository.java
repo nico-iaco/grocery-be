@@ -14,6 +14,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("SELECT SUM(t.quantity) from Transaction t where t.item = :item")
     Optional<Double> sumItemQuantityByItem(Item item);
 
+    @Query("SELECT SUM(t.availableQuantity) from Transaction t where t.item = :item")
+    Optional<Double> sumItemAvailableQuantityByItem(Item item);
+
     @Query("SELECT DISTINCT t.unit FROM Transaction t where t.item = :item")
     List<String> getUnitOfTransaction(Item item);
 
