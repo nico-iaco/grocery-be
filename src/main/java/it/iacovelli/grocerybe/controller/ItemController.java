@@ -88,6 +88,7 @@ public class ItemController {
     @PostMapping("/{id}/transaction")
     public BaseResponse<TransactionDto> addTransactionToItem(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable("id") UUID itemId,
                                                              @RequestBody TransactionDto transactionDto) {
+        transactionDto.setAvailableQuantity(transactionDto.getQuantity());
         TransactionDto dto = transactionService.addTransaction(transactionDto, itemId);
         return new BaseResponse<>(dto, null);
     }

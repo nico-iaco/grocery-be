@@ -21,6 +21,8 @@ public class ItemDto implements Serializable {
 
     private double quantity;
 
+    private double availableQuantity;
+
     private String unit;
 
 }

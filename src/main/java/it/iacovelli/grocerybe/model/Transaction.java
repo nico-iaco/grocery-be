@@ -29,6 +29,8 @@ public class Transaction {
 
     private double quantity;
 
+    private double availableQuantity;
+
     private String unit;
 
     private double price;

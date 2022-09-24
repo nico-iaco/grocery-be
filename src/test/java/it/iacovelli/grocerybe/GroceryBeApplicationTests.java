@@ -20,12 +20,14 @@ class GroceryBeApplicationTests {
             "BARCODE-TEST",
             "TEST",
             0,
+            0,
             ""
     );
 
     private final TransactionDto transactionDto = new TransactionDto(
             null,
             "VENDOR",
+            20.0,
             20.0,
             "unit",
             43.2,

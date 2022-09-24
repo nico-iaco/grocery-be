@@ -19,6 +19,8 @@ public class TransactionDto implements Serializable {
 
     private double quantity;
 
+    private double availableQuantity;
+
     private String unit;
 
     private double price;
