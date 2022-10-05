@@ -12,7 +12,7 @@ public interface ItemService {
 
     ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException;
 
-    List<ItemDto> getAllItems();
+    List<ItemDto> getAllItems(boolean onlyAvailable);
 
     ItemDto getItem(UUID id) throws ItemNotFoundException;
 

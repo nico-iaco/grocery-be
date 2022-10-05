@@ -40,9 +40,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItems() {
+    public List<ItemDto> getAllItems(boolean onlyAvailable) {
         List<ItemDto> itemsDtoList = new ArrayList<>();
         itemRepository.findAll().forEach(item -> itemsDtoList.add(itemMapper.entityToDto(item)));
+        if (onlyAvailable) {
+            itemsDtoList.removeIf(itemDto -> itemDto.getAvailableQuantity() == 0);
+        }
         return itemsDtoList;
     }
 
