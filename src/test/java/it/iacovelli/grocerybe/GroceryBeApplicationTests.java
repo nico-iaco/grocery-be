@@ -62,7 +62,7 @@ class GroceryBeApplicationTests {
     @Test
     void getAllItems() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
-        List<ItemDto> items = itemService.getAllItems();
+        List<ItemDto> items = itemService.getAllItems(false);
         deleteItem(savedItemDto.getId());
         assert items.size() == 1;
     }
@@ -80,7 +80,7 @@ class GroceryBeApplicationTests {
     void getAllItemTransactions() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
         TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId());
-        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(savedItemDto.getId());
+        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(savedItemDto.getId(), false);
         deleteTransaction(savedTransaction.getId(), savedItemDto.getId());
         deleteItem(savedItemDto.getId());
         assert itemTransactions.size() == 1;

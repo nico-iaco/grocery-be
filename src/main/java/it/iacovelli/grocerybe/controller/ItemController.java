@@ -39,8 +39,9 @@ public class ItemController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items found")})
     @GetMapping("/")
-    public BaseResponse<List<ItemDto>> getAllItems() {
-        List<ItemDto> items = itemService.getAllItems();
+    public BaseResponse<List<ItemDto>> getAllItems(
+            @Parameter(description = "flag for getting only available items") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable) {
+        List<ItemDto> items = itemService.getAllItems(onlyAvailable);
         return new BaseResponse<>(items, null);
     }
 
@@ -97,8 +98,10 @@ public class ItemController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transactions found")})
     @GetMapping("/{id}/transaction")
-    public BaseResponse<List<TransactionDto>> getItemTransactions(@Parameter(description = "id of the item from which get the transactions") @PathVariable("id") UUID itemId) {
-        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(itemId);
+    public BaseResponse<List<TransactionDto>> getItemTransactions(
+            @Parameter(description = "id of the item from which get the transactions") @PathVariable("id") UUID itemId,
+            @Parameter(description = "flag for getting only available transaction") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable) {
+        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(itemId, onlyAvailable);
         return new BaseResponse<>(itemTransactions, null);
     }
 
