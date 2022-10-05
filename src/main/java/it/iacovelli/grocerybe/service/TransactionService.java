@@ -9,7 +9,7 @@ public interface TransactionService {
 
     TransactionDto addTransaction(TransactionDto transactionDto, UUID itemId);
 
-    List<TransactionDto> getItemTransactions(UUID itemId);
+    List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable);
 
     TransactionDto getItemTransaction(UUID itemId, UUID transactionId);
 

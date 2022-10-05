@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,9 +36,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDto> getItemTransactions(UUID itemId) {
+    public List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable) {
+        List<TransactionDto> transactionDtoList = new ArrayList<>();
         Item item = getItemFromId(itemId);
-        return transactionRepository.findTransactionsByItem(item).stream().map(transactionMapper::entityToDto).toList();
+        transactionRepository.findTransactionsByItem(item).forEach(transaction -> transactionDtoList.add(transactionMapper.entityToDto(transaction)));
+        if (onlyAvailable) {
+            transactionDtoList.removeIf(transactionDto -> transactionDto.getQuantity() == 0);
+        }
+        return transactionDtoList;
     }
 
     @Override
