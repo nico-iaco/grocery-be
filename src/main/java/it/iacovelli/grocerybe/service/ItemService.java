@@ -22,4 +22,6 @@ public interface ItemService {
 
     FoodDetailDto getFoodDetail(UUID itemId) throws ItemNotFoundException;
 
+    float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity) throws ItemNotFoundException;
+
 }

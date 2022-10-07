@@ -6,12 +6,12 @@ commonLabels:
 configMapGenerator:
     - name: grocery-be-properties
       literals:
-          - spring.datasource.url=jdbc:postgresql://192.168.86.5:5432/grocery
-          - spring.datasource.username=grocerybe
+          - DB_URL=192.168.86.5
+          - DB_USER=grocerybe
           - grocery-be.external.food-details-integrator-be.base-url=http://food-details-integrator-be-service.grocery.svc.cluster.local:8080
 secretGenerator:
     - name: grocery-be-secrets
       literals:
-          - spring.datasource.password=Password123
+          - DB_PASSWORD=Password123
 patchesStrategicMerge:
     - deployment_patch.yaml

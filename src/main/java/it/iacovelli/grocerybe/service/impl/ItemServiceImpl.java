@@ -30,6 +30,9 @@ public class ItemServiceImpl implements ItemService {
     @Value("${grocery-be.external.food-details-integrator-be.details-path}")
     private String foodDetailsEndpoint;
 
+    @Value("${grocery-be.external.food-details-integrator-be.kcal-consumed-path}")
+    private String kcalConsumedEndpoint;
+
     @Override
     public ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException {
         if (itemRepository.countItemsByBarcode(itemDto.getBarcode()) > 0) {
@@ -73,5 +76,12 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         FoodDetailDto detailDto = restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode());
         return detailDto;
+    }
+
+    @Override
+    public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity) throws ItemNotFoundException {
+        Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+        Float kcalConsumed = restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity);
+        return kcalConsumed != null ? kcalConsumed : 0;
     }
 }
