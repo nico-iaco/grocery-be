@@ -17,3 +17,4 @@ grocery-be:
         food-details-integrator-be:
             base-url: http://localhost:8081
             details-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}
+            kcal-consumed-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}/kcal?&quantity={quantity}
