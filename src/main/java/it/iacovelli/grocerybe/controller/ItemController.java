@@ -83,6 +83,16 @@ public class ItemController {
         return new BaseResponse<>(foodDetail, null);
     }
 
+    @Operation(summary = "Get kcal consumed for item and quantity")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Kcal consumed found")})
+    @GetMapping("/{id}/kcal")
+    public BaseResponse<Float> getKcalConsumedForQuantity(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
+                                                          @Parameter(description = "quantity of the item to be searched") @RequestParam float quantity) {
+        float kcal = itemService.getKcalConsumedForItemAndQuantity(id, quantity);
+        return new BaseResponse<>(kcal, null);
+    }
+
     @Operation(summary = "Add a new transaction to an item")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction added")})
