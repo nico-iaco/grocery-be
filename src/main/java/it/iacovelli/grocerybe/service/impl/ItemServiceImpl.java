@@ -6,6 +6,7 @@ import it.iacovelli.grocerybe.mapper.ItemMapper;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
+import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -83,5 +85,16 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         Float kcalConsumed = restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity);
         return kcalConsumed != null ? kcalConsumed : 0;
+    }
+
+    @Override
+    public ItemStatisticDto getItemsStatistic() {
+        ItemStatisticDto itemStatisticDto = new ItemStatisticDto();
+        LocalDate nowPlusOneWeek = LocalDate.now().plusWeeks(1);
+        List<ItemDto> itemsInExpiration = itemRepository.findItemsInExpiration(nowPlusOneWeek).stream().map(itemMapper::entityToDto).toList();
+        itemStatisticDto.setItemsInExpiration(itemsInExpiration);
+        List<ItemDto> itemsAlmostFinished = itemRepository.findItemsAlmostFinished().stream().map(itemMapper::entityToDto).toList();
+        itemStatisticDto.setItemsAlmostFinished(itemsAlmostFinished);
+        return itemStatisticDto;
     }
 }
