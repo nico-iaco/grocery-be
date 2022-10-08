@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
+import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
 import it.iacovelli.grocerybe.model.response.BaseResponse;
 import it.iacovelli.grocerybe.service.ItemService;
@@ -43,6 +44,15 @@ public class ItemController {
             @Parameter(description = "flag for getting only available items") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable) {
         List<ItemDto> items = itemService.getAllItems(onlyAvailable);
         return new BaseResponse<>(items, null);
+    }
+
+    @Operation(summary = "Get items statistics")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Items statistics found")})
+    @GetMapping("/statistics")
+    public BaseResponse<ItemStatisticDto> getStatistics() {
+        ItemStatisticDto itemsStatistic = itemService.getItemsStatistic();
+        return new BaseResponse<>(itemsStatistic, null);
     }
 
     @Operation(summary = "Get an item by its id")
