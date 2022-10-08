@@ -20,7 +20,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("SELECT DISTINCT t.unit FROM Transaction t where t.item = :item")
     List<String> getUnitOfTransaction(Item item);
 
-    List<Transaction> findTransactionsByItem(Item item);
+    List<Transaction> findTransactionsByItemOrderByExpirationDateAsc(Item item);
 
     Optional<Transaction> findTransactionByIdAndItem(UUID id, Item item);
 

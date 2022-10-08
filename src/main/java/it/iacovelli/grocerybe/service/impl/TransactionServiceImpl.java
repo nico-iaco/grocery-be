@@ -39,7 +39,7 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable) {
         List<TransactionDto> transactionDtoList = new ArrayList<>();
         Item item = getItemFromId(itemId);
-        transactionRepository.findTransactionsByItem(item).forEach(transaction -> transactionDtoList.add(transactionMapper.entityToDto(transaction)));
+        transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item).forEach(transaction -> transactionDtoList.add(transactionMapper.entityToDto(transaction)));
         if (onlyAvailable) {
             transactionDtoList.removeIf(transactionDto -> transactionDto.getQuantity() == 0);
         }
