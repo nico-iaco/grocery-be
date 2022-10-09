@@ -11,6 +11,7 @@ import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -93,7 +94,7 @@ public class ItemServiceImpl implements ItemService {
         LocalDate nowPlusOneWeek = LocalDate.now().plusWeeks(1);
         List<ItemDto> itemsInExpiration = itemRepository.findItemsInExpiration(nowPlusOneWeek).stream().map(itemMapper::entityToDto).toList();
         itemStatisticDto.setItemsInExpiration(itemsInExpiration);
-        List<ItemDto> itemsAlmostFinished = itemRepository.findItemsAlmostFinished().stream().map(itemMapper::entityToDto).toList();
+        List<ItemDto> itemsAlmostFinished = itemRepository.findItemsAlmostFinished(PageRequest.of(0, 5)).stream().map(itemMapper::entityToDto).toList();
         itemStatisticDto.setItemsAlmostFinished(itemsAlmostFinished);
         return itemStatisticDto;
     }
