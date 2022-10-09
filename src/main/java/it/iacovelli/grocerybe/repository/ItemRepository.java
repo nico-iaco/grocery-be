@@ -1,6 +1,7 @@
 package it.iacovelli.grocerybe.repository;
 
 import it.iacovelli.grocerybe.model.Item;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +23,6 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
     List<Item> findItemsInExpiration(@Param("date") LocalDate date);
 
     @Query("SELECT DISTINCT t.item FROM Transaction t WHERE t.availableQuantity < (t.quantity * 0.3) and t.availableQuantity > 0")
-    List<Item> findItemsAlmostFinished();
+    List<Item> findItemsAlmostFinished(Pageable pageable);
 
 }
