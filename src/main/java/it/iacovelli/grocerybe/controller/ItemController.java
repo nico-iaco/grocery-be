@@ -21,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/item")
 @RequiredArgsConstructor
-public class ItemController {
+public class ItemController extends BaseController {
 
     private final ItemService itemService;
 
