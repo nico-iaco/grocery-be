@@ -1,5 +1,6 @@
 package it.iacovelli.grocerybe.service.impl;
 
+import it.iacovelli.grocerybe.exception.FoodDetailsNotAvailableException;
 import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
 import it.iacovelli.grocerybe.exception.ItemNotFoundException;
 import it.iacovelli.grocerybe.mapper.ItemMapper;
@@ -11,6 +12,8 @@ import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -29,6 +32,8 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
 
     private final RestTemplate restTemplate;
+
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Value("${grocery-be.external.food-details-integrator-be.details-path}")
     private String foodDetailsEndpoint;
@@ -75,17 +80,23 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public FoodDetailDto getFoodDetail(UUID itemId) throws ItemNotFoundException {
+    public FoodDetailDto getFoodDetail(UUID itemId) throws ItemNotFoundException, FoodDetailsNotAvailableException {
         Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
-        FoodDetailDto detailDto = restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode());
-        return detailDto;
+        CircuitBreaker foodDetails = circuitBreakerFactory.create("foodDetails");
+        return foodDetails.run(
+                () -> restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode()),
+                throwable -> {throw new FoodDetailsNotAvailableException("Food details not available");}
+        );
     }
 
     @Override
     public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity) throws ItemNotFoundException {
         Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
-        Float kcalConsumed = restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity);
-        return kcalConsumed != null ? kcalConsumed : 0;
+        CircuitBreaker kcalConsumed = circuitBreakerFactory.create("kcalConsumed");
+        return kcalConsumed.run(
+                () -> restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity),
+                throwable -> {throw new FoodDetailsNotAvailableException("Food details not available");}
+        );
     }
 
     @Override
