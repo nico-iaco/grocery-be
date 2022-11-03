@@ -1,9 +1,11 @@
 spring:
     datasource:
-        url: jdbc:postgresql://${DB_URL}:5432/grocery
+        url: jdbc:postgresql://${DB_URL}:5432/${DB_NAME}
         username: ${DB_USER}
         password: ${DB_PASSWORD}
         driverClassName: org.postgresql.Driver
+        hikari:
+            max-lifetime: 1800000
     jpa:
         show-sql: false
         hibernate:

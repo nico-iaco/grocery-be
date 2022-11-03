@@ -14,18 +14,18 @@ public interface ItemService {
 
     ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException;
 
-    List<ItemDto> getAllItems(boolean onlyAvailable);
+    List<ItemDto> getAllItems(boolean onlyAvailable, String userId);
 
-    ItemDto getItem(UUID id) throws ItemNotFoundException;
+    ItemDto getItem(UUID id, String userid) throws ItemNotFoundException;
 
-    ItemDto updateItem(UUID id, ItemDto itemDto) throws ItemNotFoundException;
+    ItemDto updateItem(UUID id, ItemDto itemDto, String userid) throws ItemNotFoundException;
 
-    void deleteItem(UUID id) throws ItemNotFoundException;
+    void deleteItem(UUID id, String userid) throws ItemNotFoundException;
 
-    FoodDetailDto getFoodDetail(UUID itemId) throws ItemNotFoundException, FoodDetailsNotAvailableException;
+    FoodDetailDto getFoodDetail(UUID itemId, String userid) throws ItemNotFoundException, FoodDetailsNotAvailableException;
 
-    float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity) throws ItemNotFoundException;
+    float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid) throws ItemNotFoundException;
 
-    ItemStatisticDto getItemsStatistic();
+    ItemStatisticDto getItemsStatistic(String userid);
 
 }

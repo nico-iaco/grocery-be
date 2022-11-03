@@ -17,11 +17,13 @@ class GroceryBeApplicationTests {
 
     private final ItemDto itemDto = new ItemDto(
             null,
+            "TEST-USER-ID",
+            "VENDOR-TEST",
             "BARCODE-TEST",
             "TEST",
             0,
             0,
-            ""
+            "g"
     );
 
     private final TransactionDto transactionDto = new TransactionDto(
@@ -29,8 +31,10 @@ class GroceryBeApplicationTests {
             "VENDOR",
             20.0,
             20.0,
+            20.0,
             "unit",
             43.2,
+            LocalDate.of(2022, 7, 6),
             LocalDate.of(2022, 7, 6)
     );
 
@@ -54,7 +58,7 @@ class GroceryBeApplicationTests {
     @Test
     void getItemSaved() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
-        ItemDto item = itemService.getItem(savedItemDto.getId());
+        ItemDto item = itemService.getItem(savedItemDto.getId(), savedItemDto.getUserId());
         deleteItem(savedItemDto.getId());
         assert item.equals(savedItemDto);
     }
@@ -62,7 +66,7 @@ class GroceryBeApplicationTests {
     @Test
     void getAllItems() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
-        List<ItemDto> items = itemService.getAllItems(false);
+        List<ItemDto> items = itemService.getAllItems(false, itemDto.getUserId());
         deleteItem(savedItemDto.getId());
         assert items.size() == 1;
     }
@@ -70,28 +74,28 @@ class GroceryBeApplicationTests {
     @Test
     void addTransactionToItem() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
-        TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId());
+        TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId(), itemDto.getUserId());
         deleteTransaction(savedTransaction.getId(), savedItemDto.getId());
         deleteItem(savedItemDto.getId());
-        assert savedTransaction.getVendor().equals(transactionDto.getVendor()) && savedTransaction.getExpirationDate().equals(transactionDto.getExpirationDate());
+        assert savedTransaction.getSeller().equals(transactionDto.getSeller()) && savedTransaction.getExpirationDate().equals(transactionDto.getExpirationDate());
     }
 
     @Test
     void getAllItemTransactions() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
-        TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId());
-        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(savedItemDto.getId(), false);
+        TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId(), itemDto.getUserId());
+        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(savedItemDto.getId(), false, itemDto.getUserId());
         deleteTransaction(savedTransaction.getId(), savedItemDto.getId());
         deleteItem(savedItemDto.getId());
         assert itemTransactions.size() == 1;
     }
 
     private void deleteItem(UUID itemId) {
-        itemService.deleteItem(itemId);
+        itemService.deleteItem(itemId, itemDto.getUserId());
     }
 
     private void deleteTransaction(UUID transactionId, UUID itemId) {
-        transactionService.deleteItemTransaction(itemId, transactionId);
+        transactionService.deleteItemTransaction(itemId, transactionId, itemDto.getUserId());
     }
 
 }

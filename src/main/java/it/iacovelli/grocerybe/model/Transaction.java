@@ -25,9 +25,11 @@ public class Transaction {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    private String vendor;
+    private String seller;
 
     private double quantity;
+
+    private double quantityStd;
 
     private double availableQuantity;
 
@@ -36,6 +38,8 @@ public class Transaction {
     private double price;
 
     private LocalDate expirationDate;
+
+    private LocalDate purchaseDate;
 
     @Override
     public boolean equals(Object o) {

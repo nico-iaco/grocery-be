@@ -7,14 +7,14 @@ import java.util.UUID;
 
 public interface TransactionService {
 
-    TransactionDto addTransaction(TransactionDto transactionDto, UUID itemId);
+    TransactionDto addTransaction(TransactionDto transactionDto, UUID itemId, String userId);
 
-    List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable);
+    List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable, String userId);
 
-    TransactionDto getItemTransaction(UUID itemId, UUID transactionId);
+    TransactionDto getItemTransaction(UUID itemId, UUID transactionId, String userId);
 
-    TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto);
+    TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto, String userId);
 
-    void deleteItemTransaction(UUID itemId, UUID transactionId);
+    void deleteItemTransaction(UUID itemId, UUID transactionId, String userId);
 
 }
