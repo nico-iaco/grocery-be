@@ -41,8 +41,9 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Items found")})
     @GetMapping("/")
     public BaseResponse<List<ItemDto>> getAllItems(
-            @Parameter(description = "flag for getting only available items") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable) {
-        List<ItemDto> items = itemService.getAllItems(onlyAvailable);
+            @Parameter(description = "flag for getting only available items") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
+            @RequestHeader("iv-user") String userId) {
+        List<ItemDto> items = itemService.getAllItems(onlyAvailable, userId);
         return new BaseResponse<>(items, null);
     }
 
@@ -50,8 +51,8 @@ public class ItemController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items statistics found")})
     @GetMapping("/statistics")
-    public BaseResponse<ItemStatisticDto> getStatistics() {
-        ItemStatisticDto itemsStatistic = itemService.getItemsStatistic();
+    public BaseResponse<ItemStatisticDto> getStatistics(@RequestHeader("iv-user") String userId) {
+        ItemStatisticDto itemsStatistic = itemService.getItemsStatistic(userId);
         return new BaseResponse<>(itemsStatistic, null);
     }
 
@@ -59,8 +60,9 @@ public class ItemController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item found")})
     @GetMapping("/{id}")
-    public BaseResponse<ItemDto> getItem(@Parameter(description = "id of the item to be searched") @PathVariable UUID id) {
-        ItemDto item = itemService.getItem(id);
+    public BaseResponse<ItemDto> getItem(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
+                                         @RequestHeader("iv-user") String userId) {
+        ItemDto item = itemService.getItem(id, userId);
         return new BaseResponse<>(item, null);
     }
 
@@ -69,8 +71,9 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Item updated")})
     @PatchMapping("/{id}")
     public BaseResponse<ItemDto> updateItem(@Parameter(description = "id of the item to be updated") @PathVariable UUID id,
-                                            @RequestBody ItemDto itemDto) {
-        ItemDto dto = itemService.updateItem(id, itemDto);
+                                            @RequestBody ItemDto itemDto,
+                                            @RequestHeader("iv-user") String userId) {
+        ItemDto dto = itemService.updateItem(id, itemDto, userId);
         return new BaseResponse<>(dto, null);
     }
 
@@ -79,8 +82,9 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Item deleted",
                     content = { @Content(mediaType = "application/json") })})
     @DeleteMapping("/{id}")
-    public BaseResponse<String> deleteItem(@Parameter(description = "id of the item to be deleted") @PathVariable UUID id) {
-        itemService.deleteItem(id);
+    public BaseResponse<String> deleteItem(@Parameter(description = "id of the item to be deleted") @PathVariable UUID id,
+                                           @RequestHeader("iv-user") String userId) {
+        itemService.deleteItem(id, userId);
         return new BaseResponse<>("Item deleted", null);
     }
 
@@ -88,8 +92,9 @@ public class ItemController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Food detail found")})
     @GetMapping("/{id}/detail")
-    public BaseResponse<FoodDetailDto> getFoodDetail(@Parameter(description = "id of the item to be searched") @PathVariable UUID id) {
-        FoodDetailDto foodDetail = itemService.getFoodDetail(id);
+    public BaseResponse<FoodDetailDto> getFoodDetail(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
+                                                     @RequestHeader("iv-user") String userId) {
+        FoodDetailDto foodDetail = itemService.getFoodDetail(id, userId);
         return new BaseResponse<>(foodDetail, null);
     }
 
@@ -98,8 +103,9 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Kcal consumed found")})
     @GetMapping("/{id}/kcal")
     public BaseResponse<Float> getKcalConsumedForQuantity(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
-                                                          @Parameter(description = "quantity of the item to be searched") @RequestParam float quantity) {
-        float kcal = itemService.getKcalConsumedForItemAndQuantity(id, quantity);
+                                                          @Parameter(description = "quantity of the item to be searched") @RequestParam float quantity,
+                                                          @RequestHeader("iv-user") String userId) {
+        float kcal = itemService.getKcalConsumedForItemAndQuantity(id, quantity, userId);
         return new BaseResponse<>(kcal, null);
     }
 
@@ -108,9 +114,10 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Transaction added")})
     @PostMapping("/{id}/transaction")
     public BaseResponse<TransactionDto> addTransactionToItem(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable("id") UUID itemId,
-                                                             @RequestBody TransactionDto transactionDto) {
+                                                             @RequestBody TransactionDto transactionDto,
+                                                             @RequestHeader("iv-user") String userId) {
         transactionDto.setAvailableQuantity(transactionDto.getQuantity());
-        TransactionDto dto = transactionService.addTransaction(transactionDto, itemId);
+        TransactionDto dto = transactionService.addTransaction(transactionDto, itemId, userId);
         return new BaseResponse<>(dto, null);
     }
 
@@ -120,8 +127,9 @@ public class ItemController extends BaseController {
     @GetMapping("/{id}/transaction")
     public BaseResponse<List<TransactionDto>> getItemTransactions(
             @Parameter(description = "id of the item from which get the transactions") @PathVariable("id") UUID itemId,
-            @Parameter(description = "flag for getting only available transaction") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable) {
-        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(itemId, onlyAvailable);
+            @Parameter(description = "flag for getting only available transaction") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
+            @RequestHeader("iv-user") String userId) {
+        List<TransactionDto> itemTransactions = transactionService.getItemTransactions(itemId, onlyAvailable, userId);
         return new BaseResponse<>(itemTransactions, null);
     }
 
@@ -131,8 +139,9 @@ public class ItemController extends BaseController {
     })
     @GetMapping("/{itemId}/transaction/{transactionId}")
     public BaseResponse<TransactionDto> getItemTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable UUID itemId,
-                                                    @Parameter(description = "id of the transaction searched") @PathVariable UUID transactionId) {
-        TransactionDto itemTransaction = transactionService.getItemTransaction(itemId, transactionId);
+                                                           @Parameter(description = "id of the transaction searched") @PathVariable UUID transactionId,
+                                                           @RequestHeader("iv-user") String userId) {
+        TransactionDto itemTransaction = transactionService.getItemTransaction(itemId, transactionId, userId);
         return new BaseResponse<>(itemTransaction, null);
     }
 
@@ -141,8 +150,9 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Transaction updated")})
     @PatchMapping("/{id}/transaction")
     public BaseResponse<TransactionDto> updateTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable("id") UUID itemId,
-                                                          @RequestBody TransactionDto transactionDto) {
-        TransactionDto dto = transactionService.updateItemTransaction(itemId, transactionDto);
+                                                          @RequestBody TransactionDto transactionDto,
+                                                          @RequestHeader("iv-user") String userId) {
+        TransactionDto dto = transactionService.updateItemTransaction(itemId, transactionDto, userId);
         return new BaseResponse<>(dto, null);
     }
 
@@ -151,8 +161,9 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Transaction deleted")})
     @DeleteMapping("/{itemId}/transaction/{transactionId}")
     public BaseResponse<String> deleteTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable UUID itemId,
-                                                  @Parameter(description = "id of the transaction to be deleted") @PathVariable UUID transactionId) {
-        transactionService.deleteItemTransaction(itemId, transactionId);
+                                                  @Parameter(description = "id of the transaction to be deleted") @PathVariable UUID transactionId,
+                                                  @RequestHeader("iv-user") String userId) {
+        transactionService.deleteItemTransaction(itemId, transactionId, userId);
         return new BaseResponse<>("Transaction deleted", null);
     }
 

@@ -21,6 +21,10 @@ public class Item {
     @Column(columnDefinition = "UUID")
     private UUID id;
 
+    private String userId;
+
+    private String vendor;
+
     private String barcode;
 
     private String name;

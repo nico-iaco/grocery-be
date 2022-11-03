@@ -23,6 +23,7 @@ public abstract class ItemMapper {
     public abstract Item dtoToEntity(ItemDto itemDto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     public abstract void updateItem(ItemDto itemDto, @MappingTarget Item item);
 
     @BeforeMapping

@@ -51,9 +51,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItems(boolean onlyAvailable) {
+    public List<ItemDto> getAllItems(boolean onlyAvailable, String userId) {
         List<ItemDto> itemsDtoList = new ArrayList<>();
-        itemRepository.findAll().forEach(item -> itemsDtoList.add(itemMapper.entityToDto(item)));
+        itemRepository.findAllByUserId(userId).forEach(item -> itemsDtoList.add(itemMapper.entityToDto(item)));
         if (onlyAvailable) {
             itemsDtoList.removeIf(itemDto -> itemDto.getAvailableQuantity() == 0);
         }
@@ -61,27 +61,27 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItem(UUID id) throws ItemNotFoundException {
-        Item item = itemRepository.findItemById(id).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+    public ItemDto getItem(UUID id, String userid) throws ItemNotFoundException {
+        Item item = itemRepository.findItemByIdAndUserId(id, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         return itemMapper.entityToDto(item);
     }
 
     @Override
-    public ItemDto updateItem(UUID id, ItemDto itemDto) throws ItemNotFoundException {
-        Item item = itemRepository.findItemById(id).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+    public ItemDto updateItem(UUID id, ItemDto itemDto, String userid) throws ItemNotFoundException {
+        Item item = itemRepository.findItemByIdAndUserId(id, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         itemMapper.updateItem(itemDto, item);
         return itemMapper.entityToDto(itemRepository.save(item));
     }
 
     @Override
-    public void deleteItem(UUID id) throws ItemNotFoundException {
-        Item item = itemRepository.findItemById(id).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+    public void deleteItem(UUID id, String userid) throws ItemNotFoundException {
+        Item item = itemRepository.findItemByIdAndUserId(id, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         itemRepository.delete(item);
     }
 
     @Override
-    public FoodDetailDto getFoodDetail(UUID itemId) throws ItemNotFoundException, FoodDetailsNotAvailableException {
-        Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+    public FoodDetailDto getFoodDetail(UUID itemId, String userid) throws ItemNotFoundException, FoodDetailsNotAvailableException {
+        Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         CircuitBreaker foodDetails = circuitBreakerFactory.create("foodDetails");
         return foodDetails.run(
                 () -> restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode()),
@@ -90,8 +90,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity) throws ItemNotFoundException {
-        Item item = itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+    public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid) throws ItemNotFoundException {
+        Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         CircuitBreaker kcalConsumed = circuitBreakerFactory.create("kcalConsumed");
         return kcalConsumed.run(
                 () -> restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity),
@@ -100,12 +100,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemStatisticDto getItemsStatistic() {
+    public ItemStatisticDto getItemsStatistic(String userid) {
         ItemStatisticDto itemStatisticDto = new ItemStatisticDto();
         LocalDate nowPlusOneWeek = LocalDate.now().plusWeeks(1);
-        List<ItemDto> itemsInExpiration = itemRepository.findItemsInExpiration(nowPlusOneWeek).stream().map(itemMapper::entityToDto).toList();
+        List<ItemDto> itemsInExpiration = itemRepository.findItemsInExpiration(nowPlusOneWeek, userid).stream().map(itemMapper::entityToDto).toList();
         itemStatisticDto.setItemsInExpiration(itemsInExpiration);
-        List<ItemDto> itemsAlmostFinished = itemRepository.findItemsAlmostFinished(PageRequest.of(0, 5)).stream().map(itemMapper::entityToDto).toList();
+        List<ItemDto> itemsAlmostFinished = itemRepository.findItemsAlmostFinished(userid, PageRequest.of(0, 5)).stream().map(itemMapper::entityToDto).toList();
         itemStatisticDto.setItemsAlmostFinished(itemsAlmostFinished);
         return itemStatisticDto;
     }
