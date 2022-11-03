@@ -61,7 +61,7 @@ create table item
 (
     id      uuid not null
         primary key,
-    user_id uuid not null,
+    user_id varchar(255) not null,
     vendor  varchar(255),
     barcode varchar(255),
     name    varchar(255)
