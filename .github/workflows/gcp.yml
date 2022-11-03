@@ -10,6 +10,7 @@ jobs:
         env:
             IMAGE_NAME: grocery-be
             LOCATION: us-central1-docker.pkg.dev
+            PROJECT_ID: foody-me
             REPOSITORY: foody-ar
         steps:
             - name: Checkout
