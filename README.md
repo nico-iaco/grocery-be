@@ -43,6 +43,7 @@ docker run -p 8080:8080 ghcr.io/nico-iaco/grocery-be:latest -e {All the environm
 | DB_URL                                                  | The host of the database                 |                       |
 | DB_USER                                                 | The user of the database                 |                       |
 | DB_PASSWORD                                             | The password of the database             |                       |
+| DB_NAME                                                 | The name of the database                 |                       |
 | grocery-be.external.food-details-integrator-be.base-url | Base url for food-details-integration-be | http://localhost:8081 |
 
 ## Database
@@ -60,30 +61,28 @@ create table item
 (
     id      uuid not null
         primary key,
+    user_id uuid not null,
+    vendor  varchar(255),
     barcode varchar(255),
     name    varchar(255)
 );
-
-alter table item
-    owner to grocerybe;
 
 create table transaction
 (
     id                 uuid                       not null
         primary key,
     expiration_date    date,
+    purchase_date      date,
     price              double precision           not null,
     quantity           double precision           not null,
+    quantity_std       double precision           not null,
+    available_quantity double precision           not null,
     unit               varchar(255),
-    vendor             varchar(255),
+    seller             varchar(255),
     item_id            uuid
         constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
             references item,
-    available_quantity double precision default 0 not null
 );
-
-alter table transaction
-    owner to grocerybe;
 
 create table item_transaction_list
 (
@@ -97,7 +96,5 @@ create table item_transaction_list
             references transaction
 );
 
-alter table item_transaction_list
-    owner to grocerybe;
 
 ```

@@ -28,17 +28,17 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public TransactionDto addTransaction(TransactionDto transactionDto, UUID itemId) {
-        Item item = getItemFromId(itemId);
+    public TransactionDto addTransaction(TransactionDto transactionDto, UUID itemId, String userId) {
+        Item item = getItemFromId(itemId, userId);
         Transaction transaction = transactionMapper.dtoToEntity(transactionDto, item);
         item.getTransactionList().add(transaction);
         return transactionMapper.entityToDto(transactionRepository.save(transaction));
     }
 
     @Override
-    public List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable) {
+    public List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable, String userId) {
         List<TransactionDto> transactionDtoList = new ArrayList<>();
-        Item item = getItemFromId(itemId);
+        Item item = getItemFromId(itemId, userId);
         transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item).forEach(transaction -> transactionDtoList.add(transactionMapper.entityToDto(transaction)));
         if (onlyAvailable) {
             transactionDtoList.removeIf(transactionDto -> transactionDto.getQuantity() == 0);
@@ -47,8 +47,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDto getItemTransaction(UUID itemId, UUID transactionId) {
-        Item item = getItemFromId(itemId);
+    public TransactionDto getItemTransaction(UUID itemId, UUID transactionId, String userId) {
+        Item item = getItemFromId(itemId, userId);
         Transaction transaction = transactionRepository.findTransactionByIdAndItem(transactionId, item)
                 .orElseThrow(() -> new RuntimeException("The transaction was not found for the item"));
         return transactionMapper.entityToDto(transaction);
@@ -56,8 +56,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto) {
-        Item item = getItemFromId(itemId);
+    public TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto, String userId) {
+        Item item = getItemFromId(itemId, userId);
         Transaction transaction = transactionRepository.findTransactionByIdAndItem(transactionDto.getId(), item)
                 .orElseThrow(() -> new RuntimeException("The transaction was not found for the item"));
         transactionMapper.updateTransaction(transactionDto, transaction);
@@ -66,8 +66,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public void deleteItemTransaction(UUID itemId, UUID transactionId) {
-        Item item = getItemFromId(itemId);
+    public void deleteItemTransaction(UUID itemId, UUID transactionId, String userId) {
+        Item item = getItemFromId(itemId, userId);
         Transaction transaction = transactionRepository.findTransactionByIdAndItem(transactionId, item)
                 .orElseThrow(() -> new RuntimeException("The transaction was not found for the item"));
         item.getTransactionList().remove(transaction);
@@ -75,7 +75,7 @@ public class TransactionServiceImpl implements TransactionService {
         itemRepository.save(item);
     }
 
-    private Item getItemFromId(UUID itemId) {
-        return itemRepository.findItemById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+    private Item getItemFromId(UUID itemId, String userId) {
+        return itemRepository.findItemByIdAndUserId(itemId, userId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
     }
 }

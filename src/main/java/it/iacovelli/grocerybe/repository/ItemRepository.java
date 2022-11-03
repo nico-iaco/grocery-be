@@ -13,16 +13,18 @@ import java.util.UUID;
 
 public interface ItemRepository extends JpaRepository<Item, UUID> {
 
+    List<Item> findAllByUserId(String userId);
+
     int countItemsByBarcode(@Param("barcode") String barcode);
 
-    Optional<Item> findItemById(@Param("id") UUID id);
+    Optional<Item> findItemByIdAndUserId(@Param("id") UUID id, @Param("userId") String userId);
 
     Optional<Item> findItemByBarcode(@Param("barcode") String barcode);
 
-    @Query("SELECT DISTINCT t.item FROM Transaction t WHERE t.expirationDate < :date and t.availableQuantity > 0")
-    List<Item> findItemsInExpiration(@Param("date") LocalDate date);
+    @Query("SELECT DISTINCT t.item FROM Transaction t WHERE t.item.userId = :userId AND t.expirationDate < :date AND t.availableQuantity > 0")
+    List<Item> findItemsInExpiration(@Param("date") LocalDate date, @Param("userId") String userId);
 
-    @Query("SELECT DISTINCT t.item FROM Transaction t WHERE t.availableQuantity < (t.quantity * 0.3) and t.availableQuantity > 0")
-    List<Item> findItemsAlmostFinished(Pageable pageable);
+    @Query("SELECT DISTINCT t.item FROM Transaction t WHERE t.item.userId = :userid and t.availableQuantity < (t.quantity * 0.3) and t.availableQuantity > 0")
+    List<Item> findItemsAlmostFinished(String userid, Pageable pageable);
 
 }

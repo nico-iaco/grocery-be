@@ -15,9 +15,11 @@ public class TransactionDto implements Serializable {
 
     private UUID id;
 
-    private String vendor;
+    private String seller;
 
     private double quantity;
+
+    private double quantityStd;
 
     private double availableQuantity;
 
@@ -26,5 +28,7 @@ public class TransactionDto implements Serializable {
     private double price;
 
     private LocalDate expirationDate;
+
+    private LocalDate purchaseDate;
 
 }

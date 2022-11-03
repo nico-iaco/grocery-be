@@ -15,6 +15,10 @@ public class ItemDto implements Serializable {
 
     private UUID id;
 
+    private String userId;
+
+    private String vendor;
+
     private String barcode;
 
     private String name;
