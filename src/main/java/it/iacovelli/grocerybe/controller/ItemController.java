@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/api/item")
 @RequiredArgsConstructor
 public class ItemController extends BaseController {
 
