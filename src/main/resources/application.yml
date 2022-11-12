@@ -11,6 +11,10 @@ spring:
         hibernate:
             ddl-auto: update
         generate-ddl: true
+    cloud:
+        gcp:
+            logging:
+                enabled: true
 grocery-be:
     external:
         food-details-integrator-be:

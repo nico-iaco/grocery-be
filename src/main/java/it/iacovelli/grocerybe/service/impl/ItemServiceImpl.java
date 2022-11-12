@@ -11,6 +11,8 @@ import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -34,6 +36,8 @@ public class ItemServiceImpl implements ItemService {
     private final RestTemplate restTemplate;
 
     private final CircuitBreakerFactory circuitBreakerFactory;
+
+    private static final Log LOGGER = LogFactory.getLog(ItemServiceImpl.class);
 
     @Value("${grocery-be.external.food-details-integrator-be.details-path}")
     private String foodDetailsEndpoint;
@@ -83,6 +87,7 @@ public class ItemServiceImpl implements ItemService {
     public FoodDetailDto getFoodDetail(UUID itemId, String userid) throws ItemNotFoundException, FoodDetailsNotAvailableException {
         Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         CircuitBreaker foodDetails = circuitBreakerFactory.create("foodDetails");
+        LOGGER.info("Calling food details integrator BE with endpoint: " + foodDetailsEndpoint);
         return foodDetails.run(
                 () -> restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode()),
                 throwable -> {throw new FoodDetailsNotAvailableException("Food details not available");}
@@ -93,6 +98,7 @@ public class ItemServiceImpl implements ItemService {
     public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid) throws ItemNotFoundException {
         Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         CircuitBreaker kcalConsumed = circuitBreakerFactory.create("kcalConsumed");
+        LOGGER.info("Calling food details integrator BE with endpoint: " + kcalConsumedEndpoint);
         return kcalConsumed.run(
                 () -> restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity),
                 throwable -> {throw new FoodDetailsNotAvailableException("Food details not available");}
