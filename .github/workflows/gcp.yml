@@ -26,10 +26,10 @@ jobs:
                 with:
                   project_id: ${{ env.PROJECT_ID }}
                   export_default_credentials: true
-            - id: 'Set project id'
+            - name: 'Set project id'
               run: |
                     gcloud config set project ${{ env.PROJECT_ID }}
-            - id: 'set application default credentials'
+            - name: 'set application default credentials'
               run: |
                     gcloud auth application-default login
             - name: Build Docker Image
