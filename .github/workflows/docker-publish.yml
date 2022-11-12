@@ -26,7 +26,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  PROJECT_ID: ${{ env.PROJECT_ID }}
+  PROJECT_ID: foody-me
 
 
 jobs:
