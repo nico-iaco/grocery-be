@@ -14,6 +14,6 @@ spring:
 grocery-be:
     external:
         food-details-integrator-be:
-            base-url: http://localhost:8081
+            base-url: ${FOOD_DETAILS_BASE_URL}
             details-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}
             kcal-consumed-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}/kcal?&quantity={quantity}

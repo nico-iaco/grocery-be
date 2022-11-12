@@ -38,13 +38,13 @@ docker run -p 8080:8080 ghcr.io/nico-iaco/grocery-be:latest -e {All the environm
 
 ## Environment variables
 
-| Name                                                    | Description                              | Default value         |
-|---------------------------------------------------------|------------------------------------------|-----------------------|
-| DB_URL                                                  | The host of the database                 |                       |
-| DB_USER                                                 | The user of the database                 |                       |
-| DB_PASSWORD                                             | The password of the database             |                       |
-| DB_NAME                                                 | The name of the database                 |                       |
-| grocery-be.external.food-details-integrator-be.base-url | Base url for food-details-integration-be | http://localhost:8081 |
+| Name                  | Description                              | Default value         |
+|-----------------------|------------------------------------------|-----------------------|
+| DB_URL                | The host of the database                 |                       |
+| DB_USER               | The user of the database                 |                       |
+| DB_PASSWORD           | The password of the database             |                       |
+| DB_NAME               | The name of the database                 |                       |
+| FOOD_DETAILS_BASE_URL | Base url for food-details-integration-be | http://localhost:8081 |
 
 ## Database
 
