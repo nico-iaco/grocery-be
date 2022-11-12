@@ -29,9 +29,6 @@ jobs:
             - name: 'Set project id'
               run: |
                     gcloud config set project ${{ env.PROJECT_ID }}
-            - name: 'set application default credentials'
-              run: |
-                    gcloud auth application-default login --quiet --no-launch-browser --project ${{ env.PROJECT_ID }}
             - name: Build Docker Image
               run: docker build -t $IMAGE_NAME:latest .
               env:
