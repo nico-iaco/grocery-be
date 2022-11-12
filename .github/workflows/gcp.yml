@@ -25,7 +25,7 @@ jobs:
                   project_id: ${{ env.PROJECT_ID }}
                   export_default_credentials: true
             - name: Build Docker Image
-              run: docker build --build-arg PROJECT_ID=$PROJECT_ID -t $IMAGE_NAME:latest .
+              run: docker build --build-arg -t $IMAGE_NAME:latest .
               env:
                   SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
             - name: Configure Docker Client

@@ -3,10 +3,6 @@ WORKDIR /app
 
 COPY . .
 
-ARG PROJECT_ID
-
-ENV projectId=${PROJECT_ID}
-
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && gradle nativeCompile
 
 FROM oraclelinux:7-slim
