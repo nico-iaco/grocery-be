@@ -19,9 +19,11 @@ jobs:
                 id: short-sha
                 with:
                     length: 7
-            - uses: google-github-actions/setup-gcloud@v0
-              with:
-                  service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+            -   uses: google-github-actions/auth@v1
+                with:
+                    credentials_json: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+            -   uses: google-github-actions/setup-gcloud@v1
+                with:
                   project_id: ${{ env.PROJECT_ID }}
                   export_default_credentials: true
             - name: Build Docker Image
