@@ -10,14 +10,15 @@ import it.iacovelli.grocerybe.repository.TransactionRepository;
 import it.iacovelli.grocerybe.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+//@assert x == 4
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;

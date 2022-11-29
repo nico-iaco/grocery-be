@@ -1,7 +1,7 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.1'
-    id 'io.spring.dependency-management' version '1.0.13.RELEASE'
-    id 'org.springframework.experimental.aot' version '0.12.1'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.graalvm.buildtools.native' version '0.9.18'
     id 'java'
 }
 
@@ -15,13 +15,10 @@ configurations {
     }
 }
 
-springAot {
-    debugVerify = false
-    removeXmlSupport = false
-    removeSpelSupport = false
-    removeYamlSupport = false
-    removeJmxSupport = true
-    verify = true
+graalvmNative {
+    metadataRepository {
+        enabled = true
+    }
 }
 
 repositories {
@@ -30,20 +27,19 @@ repositories {
     maven { url 'https://repo.spring.io/release' }
 }
 
+bootBuildImage {
+    builder = 'paketobuildpacks/builder:tiny'
+}
+
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-actuator') {
-        exclude group: 'io.micrometer', module: 'micrometer-core'
-    }
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
     //implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
-        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
-    }
-    implementation "org.apache.tomcat.experimental:tomcat-embed-programmatic:${dependencyManagement.importedProperties["tomcat.version"]}"
+    implementation('org.springframework.boot:spring-boot-starter-web')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:2.1.5'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
-    implementation 'org.springdoc:springdoc-openapi-native:1.6.12'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.0.0-RC2'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.13'
+    implementation 'org.springdoc:springdoc-openapi-native:1.6.13'
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
     compileOnly 'org.projectlombok:lombok'
