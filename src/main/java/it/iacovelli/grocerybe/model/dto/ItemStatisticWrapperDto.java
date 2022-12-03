@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class ItemStatisticDto implements Serializable {
+public class ItemStatisticWrapperDto implements Serializable {
 
     private List<ItemDto> itemsAlmostFinished;
 

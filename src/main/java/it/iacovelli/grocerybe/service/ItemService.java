@@ -5,7 +5,7 @@ import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
 import it.iacovelli.grocerybe.exception.ItemNotFoundException;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
-import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
+import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +26,6 @@ public interface ItemService {
 
     float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid) throws ItemNotFoundException;
 
-    ItemStatisticDto getItemsStatistic(String userid);
+    ItemStatisticWrapperDto getItemsStatistic(String userid);
 
 }

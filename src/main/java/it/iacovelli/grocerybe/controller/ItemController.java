@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
-import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
+import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
 import it.iacovelli.grocerybe.model.response.BaseResponse;
 import it.iacovelli.grocerybe.service.ItemService;
@@ -51,8 +51,8 @@ public class ItemController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items statistics found")})
     @GetMapping("/statistics")
-    public BaseResponse<ItemStatisticDto> getStatistics(@RequestHeader("iv-user") String userId) {
-        ItemStatisticDto itemsStatistic = itemService.getItemsStatistic(userId);
+    public BaseResponse<ItemStatisticWrapperDto> getStatistics(@RequestHeader("iv-user") String userId) {
+        ItemStatisticWrapperDto itemsStatistic = itemService.getItemsStatistic(userId);
         return new BaseResponse<>(itemsStatistic, null);
     }
 
