@@ -5,6 +5,7 @@ import it.iacovelli.grocerybe.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,6 +20,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     @Query("SELECT DISTINCT t.unit FROM Transaction t where t.item = :item")
     List<String> getUnitOfTransaction(Item item);
+
+    @Query("SELECT t.expirationDate FROM Transaction t where t.item = :item ORDER BY t.expirationDate ASC")
+    LocalDate findNextExpirationDateOfItem(Item item);
 
     List<Transaction> findTransactionsByItemOrderByExpirationDateAsc(Item item);
 

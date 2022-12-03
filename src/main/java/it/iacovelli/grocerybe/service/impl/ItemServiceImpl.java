@@ -7,7 +7,7 @@ import it.iacovelli.grocerybe.mapper.ItemMapper;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
-import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
+import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -106,13 +106,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemStatisticDto getItemsStatistic(String userid) {
-        ItemStatisticDto itemStatisticDto = new ItemStatisticDto();
+    public ItemStatisticWrapperDto getItemsStatistic(String userid) {
+        ItemStatisticWrapperDto itemStatisticWrapperDto = new ItemStatisticWrapperDto();
         LocalDate nowPlusOneWeek = LocalDate.now().plusWeeks(1);
         List<ItemDto> itemsInExpiration = itemRepository.findItemsInExpiration(nowPlusOneWeek, userid).stream().map(itemMapper::entityToDto).toList();
-        itemStatisticDto.setItemsInExpiration(itemsInExpiration);
+        itemStatisticWrapperDto.setItemsInExpiration(itemsInExpiration);
         List<ItemDto> itemsAlmostFinished = itemRepository.findItemsAlmostFinished(userid, PageRequest.of(0, 5)).stream().map(itemMapper::entityToDto).toList();
-        itemStatisticDto.setItemsAlmostFinished(itemsAlmostFinished);
-        return itemStatisticDto;
+        itemStatisticWrapperDto.setItemsAlmostFinished(itemsAlmostFinished);
+        return itemStatisticWrapperDto;
     }
 }

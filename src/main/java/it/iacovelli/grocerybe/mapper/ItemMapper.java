@@ -10,6 +10,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 
 @Mapper(componentModel = "spring")
 public abstract class ItemMapper {
@@ -32,9 +33,11 @@ public abstract class ItemMapper {
         double quantity = transactionRepository.sumItemQuantityByItem(item).orElse(0.0);
         double availableQuantity = transactionRepository.sumItemAvailableQuantityByItem(item).orElse(0.0);
         String unit = transactionRepository.getUnitOfTransaction(item).stream().findFirst().orElse("");
+        LocalDate nextExpirationDate = transactionRepository.findNextExpirationDateOfItem(item);
         itemDto.setQuantity(quantity);
         itemDto.setAvailableQuantity(availableQuantity);
         itemDto.setUnit(unit);
+        itemDto.setNextExpirationDate(nextExpirationDate);
     }
 
 }
