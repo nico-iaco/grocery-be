@@ -81,7 +81,7 @@ create table transaction
     seller             varchar(255),
     item_id            uuid
         constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
-            references item,
+            references item
 );
 
 create table item_transaction_list
@@ -95,6 +95,18 @@ create table item_transaction_list
         constraint fk3c5txed590yrvt06opdmmc3g2
             references transaction
 );
+
+create table food_detail
+(
+    id          uuid not null
+        primary key,
+    item_id     uuid
+        constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
+            references item,
+    generic_name varchar(255),
+    image_nutrition_url varchar(255),
+    image_url varchar(255)
+)
 
 
 ```
