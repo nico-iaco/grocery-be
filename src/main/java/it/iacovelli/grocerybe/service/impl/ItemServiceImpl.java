@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -146,7 +145,6 @@ public class ItemServiceImpl implements ItemService {
         return itemStatisticWrapperDto;
     }
 
-    @Async
     void saveFoodDetail(FoodDetailDto foodDetailDto, Item item) {
         boolean isPresent = foodDetailRepository.findFoodDetailByItem(item).isPresent();
         if (!isPresent) {
