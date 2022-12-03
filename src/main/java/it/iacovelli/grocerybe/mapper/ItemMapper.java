@@ -33,7 +33,7 @@ public abstract class ItemMapper {
         double quantity = transactionRepository.sumItemQuantityByItem(item).orElse(0.0);
         double availableQuantity = transactionRepository.sumItemAvailableQuantityByItem(item).orElse(0.0);
         String unit = transactionRepository.getUnitOfTransaction(item).stream().findFirst().orElse("");
-        LocalDate nextExpirationDate = transactionRepository.findNextExpirationDateOfItem(item);
+        LocalDate nextExpirationDate = transactionRepository.findNextExpirationDateOfItem(item).stream().findFirst().orElse(null);
         itemDto.setQuantity(quantity);
         itemDto.setAvailableQuantity(availableQuantity);
         itemDto.setUnit(unit);
