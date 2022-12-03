@@ -29,7 +29,12 @@ repositories {
 
 bootBuildImage {
     builder = 'paketobuildpacks/builder:tiny'
+    environment = [
+            'BP_NATIVE_IMAGE': 'true',
+            'BP_JVM_VERSION': '17',
+    ]
 }
+
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-actuator')
