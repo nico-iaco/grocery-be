@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,8 +88,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(UUID id, String userid) throws ItemNotFoundException {
         Item item = itemRepository.findItemByIdAndUserId(id, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+        if(item.getFoodDetail() != null) {
+            foodDetailRepository.delete(item.getFoodDetail());
+        }
         itemRepository.delete(item);
     }
 
@@ -148,7 +153,9 @@ public class ItemServiceImpl implements ItemService {
             FoodDetail foodDetail = foodDetailMapper.dtoToEntity(foodDetailDto, item);
             foodDetail.setItem(item);
             LOGGER.info("Saving food details for item " + item.getBarcode());
-            foodDetailRepository.save(foodDetail);
+            foodDetail = foodDetailRepository.save(foodDetail);
+            item.setFoodDetail(foodDetail);
+            itemRepository.save(item);
         }
     }
 
