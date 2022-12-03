@@ -3,11 +3,14 @@ package it.iacovelli.grocerybe.service.impl;
 import it.iacovelli.grocerybe.exception.FoodDetailsNotAvailableException;
 import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
 import it.iacovelli.grocerybe.exception.ItemNotFoundException;
+import it.iacovelli.grocerybe.mapper.FoodDetailMapper;
 import it.iacovelli.grocerybe.mapper.ItemMapper;
+import it.iacovelli.grocerybe.model.FoodDetail;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
+import it.iacovelli.grocerybe.repository.FoodDetailRepository;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +20,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,7 +36,11 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
 
+    private final FoodDetailRepository foodDetailRepository;
+
     private final ItemMapper itemMapper;
+
+    private final FoodDetailMapper foodDetailMapper;
 
     private final RestTemplate restTemplate;
 
@@ -88,10 +97,26 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         CircuitBreaker foodDetails = circuitBreakerFactory.create("foodDetails");
         LOGGER.info("Calling food details integrator BE with endpoint: " + foodDetailsEndpoint);
-        return foodDetails.run(
-                () -> restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode()),
-                throwable -> {throw new FoodDetailsNotAvailableException("Food details not available");}
-        );
+
+        Optional<FoodDetail> optionalFoodDetail = foodDetailRepository.findFoodDetailByItem(item);
+
+        if (optionalFoodDetail.isPresent()) {
+            LOGGER.info("Food details found in DB");
+            return foodDetailMapper.entityToDto(optionalFoodDetail.get());
+        } else {
+            FoodDetailDto foodDetailDto = foodDetails.run(
+                    () -> restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode()),
+                    throwable -> {
+                        throw new FoodDetailsNotAvailableException("Food details not available");
+                    }
+            );
+            if (foodDetailDto != null) {
+                saveFoodDetail(foodDetailDto, item);
+                return foodDetailDto;
+            } else {
+                throw new FoodDetailsNotAvailableException("Food details not available");
+            }
+        }
     }
 
     @Override
@@ -115,4 +140,16 @@ public class ItemServiceImpl implements ItemService {
         itemStatisticWrapperDto.setItemsAlmostFinished(itemsAlmostFinished);
         return itemStatisticWrapperDto;
     }
+
+    @Async
+    void saveFoodDetail(FoodDetailDto foodDetailDto, Item item) {
+        boolean isPresent = foodDetailRepository.findFoodDetailByItem(item).isPresent();
+        if (!isPresent) {
+            FoodDetail foodDetail = foodDetailMapper.dtoToEntity(foodDetailDto, item);
+            foodDetail.setItem(item);
+            LOGGER.info("Saving food details for item " + item.getBarcode());
+            foodDetailRepository.save(foodDetail);
+        }
+    }
+
 }
