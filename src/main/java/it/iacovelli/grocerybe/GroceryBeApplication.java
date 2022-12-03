@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
 @SpringBootApplication( proxyBeanMethods = false )
 @EnableAsync
 @OpenAPIDefinition(info = @Info(title = "Grocery API", version = "1.0.0",
@@ -19,7 +21,10 @@ public class GroceryBeApplication {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        return builder
+                .setConnectTimeout(Duration.ofSeconds(5))
+                .setReadTimeout(Duration.ofSeconds(5))
+                .build();
     }
     public static void main(String[] args) {
         SpringApplication.run(GroceryBeApplication.class, args);
