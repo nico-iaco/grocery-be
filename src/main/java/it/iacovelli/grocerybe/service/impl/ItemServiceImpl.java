@@ -7,12 +7,11 @@ import it.iacovelli.grocerybe.mapper.FoodDetailMapper;
 import it.iacovelli.grocerybe.mapper.ItemMapper;
 import it.iacovelli.grocerybe.model.FoodDetail;
 import it.iacovelli.grocerybe.model.Item;
-import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
-import it.iacovelli.grocerybe.model.dto.ItemDto;
-import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
+import it.iacovelli.grocerybe.model.dto.*;
 import it.iacovelli.grocerybe.repository.FoodDetailRepository;
 import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.ItemService;
+import it.iacovelli.grocerybe.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +37,8 @@ public class ItemServiceImpl implements ItemService {
 
     private final FoodDetailRepository foodDetailRepository;
 
+    private final TransactionService transactionService;
+
     private final ItemMapper itemMapper;
 
     private final FoodDetailMapper foodDetailMapper;
@@ -61,6 +62,25 @@ public class ItemServiceImpl implements ItemService {
         }
         Item item = itemMapper.dtoToEntity(itemDto);
         return itemMapper.entityToDto(itemRepository.save(item));
+    }
+
+    @Override
+    @Transactional
+    public void addAllItems(List<ShoppingItemDto> shoppingItemList) throws ItemBarcodeAlreadyExistsException {
+        for (ShoppingItemDto shoppingItemDto : shoppingItemList) {
+            ItemDto itemDto = shoppingItemDto.getItem();
+            TransactionDto transactionDto = shoppingItemDto.getTransaction();
+            Item item;
+            if (itemRepository.countItemsByBarcode(itemDto.getBarcode()) > 0) {
+                item = itemRepository
+                        .findItemByBarcode(itemDto.getBarcode())
+                        .orElseThrow(() -> new ItemNotFoundException("The item with barcode " + itemDto.getBarcode() + " was not found"));
+            } else {
+                item = itemMapper.dtoToEntity(itemDto);
+            }
+            item = itemRepository.save(item);
+            transactionService.addTransaction(transactionDto, item.getId(), item.getUserId());
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
+import it.iacovelli.grocerybe.model.request.ShoppingCartRequest;
 import it.iacovelli.grocerybe.model.response.BaseResponse;
 import it.iacovelli.grocerybe.service.ItemService;
 import it.iacovelli.grocerybe.service.TransactionService;
@@ -34,6 +35,15 @@ public class ItemController extends BaseController {
     public BaseResponse<ItemDto> addItem(@RequestBody ItemDto itemDto) {
         ItemDto dto = itemService.addItem(itemDto);
         return new BaseResponse<>(dto, null);
+    }
+
+    @Operation(summary = "Add all items")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Items added") })
+    @PostMapping("/all")
+    public BaseResponse<Void> addItems(@RequestBody ShoppingCartRequest shoppingCartRequest) {
+        itemService.addAllItems(shoppingCartRequest.getShoppingItems());
+        return new BaseResponse<>(null, null);
     }
 
     @Operation(summary = "Get all items")

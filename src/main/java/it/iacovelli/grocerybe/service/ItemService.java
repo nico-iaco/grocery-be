@@ -6,6 +6,7 @@ import it.iacovelli.grocerybe.exception.ItemNotFoundException;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
+import it.iacovelli.grocerybe.model.dto.ShoppingItemDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public interface ItemService {
 
     ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException;
+
+    void addAllItems(List<ShoppingItemDto> shoppingItemList) throws ItemBarcodeAlreadyExistsException;
 
     List<ItemDto> getAllItems(boolean onlyAvailable, String userId);
 
