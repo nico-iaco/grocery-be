@@ -36,8 +36,8 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
-    //implementation 'org.springframework.cloud:spring-cloud-bindings:1.10.0'
-    //implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.0.0-RC2'
+    implementation 'org.springframework.cloud:spring-cloud-bindings:1.10.0'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.0.0-RC2'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.13'
     implementation 'org.springdoc:springdoc-openapi-native:1.6.13'
     implementation 'org.mapstruct:mapstruct:1.5.3.Final'
