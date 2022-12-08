@@ -41,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
         Item item = getItemFromId(itemId, userId);
         transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item).forEach(transaction -> transactionDtoList.add(transactionMapper.entityToDto(transaction)));
         if (onlyAvailable) {
-            transactionDtoList.removeIf(transactionDto -> transactionDto.getQuantity() == 0);
+            transactionDtoList.removeIf(transactionDto -> transactionDto.getAvailableQuantity() == 0);
         }
         return transactionDtoList;
     }
