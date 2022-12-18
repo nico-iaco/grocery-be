@@ -21,7 +21,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("SELECT DISTINCT t.unit FROM Transaction t where t.item = :item")
     List<String> getUnitOfTransaction(Item item);
 
-    @Query("SELECT t.expirationDate FROM Transaction t where t.item = :item ORDER BY t.expirationDate ASC ")
+    @Query("SELECT t.expirationDate FROM Transaction t where t.item = :item AND t.availableQuantity > 0 ORDER BY t.expirationDate ASC ")
     List<LocalDate> findNextExpirationDateOfItem(Item item);
 
     List<Transaction> findTransactionsByItemOrderByExpirationDateAsc(Item item);

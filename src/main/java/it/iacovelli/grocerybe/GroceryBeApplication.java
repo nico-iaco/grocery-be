@@ -20,8 +20,8 @@ public class GroceryBeApplication {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .setReadTimeout(Duration.ofSeconds(5))
+                .setConnectTimeout(Duration.ofSeconds(7))
+                .setReadTimeout(Duration.ofSeconds(7))
                 .build();
     }
     public static void main(String[] args) {
