@@ -78,7 +78,6 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
         String accessToken = "";
         try {
             GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
-            credentials.refreshIfExpired();
             accessToken = credentials.getAccessToken().getTokenValue();
         } catch (IOException e) {
             LOGGER.error("Error while getting access token", e);
