@@ -1,5 +1,6 @@
 package it.iacovelli.grocerybe.service.impl;
 
+import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import it.iacovelli.grocerybe.exception.FoodDetailsNotAvailableException;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
@@ -34,6 +35,9 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
 
     @Value("${grocery-be.external.food-details-integrator-be.kcal-consumed-path}")
     private String kcalConsumedEndpoint;
+
+    @Value("${grocery-be.external.food-details-integrator-be.base-url}")
+    private String foodDetailsIntegratorBaseUrl;
 
     @Override
     public FoodDetailDto getFoodDetails(String barcode) {
@@ -78,11 +82,46 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
         String accessToken = "";
         try {
             GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
-            accessToken = credentials.getAccessToken().getTokenValue();
+            if (credentials != null && credentials.hasRequestMetadata() && credentials.hasRequestMetadataOnly()) {
+                credentials.refreshIfExpired();
+                AccessToken token = credentials.getAccessToken();
+                if (token != null) {
+                    accessToken = token.getTokenValue();
+                } else {
+                    LOGGER.error("Token is null trying with metadata server");
+                    accessToken = getAccessTokenFromMetadataServer();
+                }
+            } else {
+                LOGGER.error("Credentials not found trying with metadata server");
+                accessToken = getAccessTokenFromMetadataServer();
+            }
         } catch (IOException e) {
             LOGGER.error("Error while getting access token", e);
+            accessToken = getAccessTokenFromMetadataServer();
         }
         return accessToken;
     }
+
+    private String getAccessTokenFromMetadataServer() {
+        String accessToken = "";
+        String url = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity?audience=" + foodDetailsIntegratorBaseUrl;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Metadata-Flavor", "Google");
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            accessToken = response.getBody();
+        } else {
+            LOGGER.error("Error while getting access token from metadata server");
+        }
+
+        return accessToken;
+    }
+
+
 
 }

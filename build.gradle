@@ -39,7 +39,7 @@ dependencies {
         exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
     }
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.14.0'
-    implementation 'org.springframework.cloud:spring-cloud-gcp-starters:1.2.8.RELEASE'
+    implementation 'com.google.auth:google-auth-library-credentials:1.5.3'
     implementation "org.apache.tomcat.experimental:tomcat-embed-programmatic:${dependencyManagement.importedProperties["tomcat.version"]}"
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:2.1.5'
