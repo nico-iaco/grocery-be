@@ -10,17 +10,14 @@ import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.dto.*;
 import it.iacovelli.grocerybe.repository.FoodDetailRepository;
 import it.iacovelli.grocerybe.repository.ItemRepository;
+import it.iacovelli.grocerybe.service.FoodDetailsIntegratorService;
 import it.iacovelli.grocerybe.service.ItemService;
 import it.iacovelli.grocerybe.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -43,17 +40,10 @@ public class ItemServiceImpl implements ItemService {
 
     private final FoodDetailMapper foodDetailMapper;
 
-    private final RestTemplate restTemplate;
-
-    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final FoodDetailsIntegratorService foodDetailsIntegratorService;
 
     private static final Log LOGGER = LogFactory.getLog(ItemServiceImpl.class);
 
-    @Value("${grocery-be.external.food-details-integrator-be.details-path}")
-    private String foodDetailsEndpoint;
-
-    @Value("${grocery-be.external.food-details-integrator-be.kcal-consumed-path}")
-    private String kcalConsumedEndpoint;
 
     @Override
     public ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException {
@@ -119,8 +109,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public FoodDetailDto getFoodDetail(UUID itemId, String userid) throws ItemNotFoundException, FoodDetailsNotAvailableException {
         Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
-        CircuitBreaker foodDetails = circuitBreakerFactory.create("foodDetails");
-        LOGGER.info("Calling food details integrator BE with endpoint: " + foodDetailsEndpoint);
 
         Optional<FoodDetail> optionalFoodDetail = foodDetailRepository.findFoodDetailByItem(item);
 
@@ -128,12 +116,7 @@ public class ItemServiceImpl implements ItemService {
             LOGGER.info("Food details found in DB");
             return foodDetailMapper.entityToDto(optionalFoodDetail.get());
         } else {
-            FoodDetailDto foodDetailDto = foodDetails.run(
-                    () -> restTemplate.getForObject(foodDetailsEndpoint, FoodDetailDto.class, item.getBarcode()),
-                    throwable -> {
-                        throw new FoodDetailsNotAvailableException("Food details not available");
-                    }
-            );
+            FoodDetailDto foodDetailDto = foodDetailsIntegratorService.getFoodDetails(item.getBarcode());
             if (foodDetailDto != null) {
                 saveFoodDetail(foodDetailDto, item);
                 return foodDetailDto;
@@ -146,12 +129,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid) throws ItemNotFoundException {
         Item item = itemRepository.findItemByIdAndUserId(itemId, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
-        CircuitBreaker kcalConsumed = circuitBreakerFactory.create("kcalConsumed");
-        LOGGER.info("Calling food details integrator BE with endpoint: " + kcalConsumedEndpoint);
-        return kcalConsumed.run(
-                () -> restTemplate.getForObject(kcalConsumedEndpoint, Float.class, item.getBarcode(), quantity),
-                throwable -> {throw new FoodDetailsNotAvailableException("Food details not available");}
-        );
+
+        return foodDetailsIntegratorService.getKcalConsumed(item.getBarcode(), quantity);
     }
 
     @Override
