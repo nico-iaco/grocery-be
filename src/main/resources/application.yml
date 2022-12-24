@@ -13,9 +13,7 @@ spring:
         generate-ddl: true
     cloud:
         gcp:
-            logging:
-                enabled: true
-            project-id: foody-me
+            project-id: ${PROJECT_ID}
 grocery-be:
     external:
         food-details-integrator-be:
