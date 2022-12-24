@@ -83,7 +83,7 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
         try {
             GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
             if (credentials != null && credentials.hasRequestMetadata() && credentials.hasRequestMetadataOnly()) {
-                credentials.refreshIfExpired();
+                //credentials.refreshIfExpired();
                 AccessToken token = credentials.getAccessToken();
                 if (token != null) {
                     accessToken = token.getTokenValue();
