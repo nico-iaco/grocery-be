@@ -115,6 +115,7 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
 
         if (response.getStatusCode().is2xxSuccessful()) {
             accessToken = response.getBody();
+            LOGGER.info("Access token retrieved from metadata server");
         } else {
             LOGGER.error("Error while getting access token from metadata server");
         }
