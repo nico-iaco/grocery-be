@@ -15,7 +15,7 @@ public interface ItemService {
 
     ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException;
 
-    void addAllItems(List<ShoppingItemDto> shoppingItemList) throws ItemBarcodeAlreadyExistsException;
+    void addAllItems(List<ShoppingItemDto> shoppingItemList, String userid) throws ItemBarcodeAlreadyExistsException;
 
     List<ItemDto> getAllItems(boolean onlyAvailable, String userId);
 

@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void addAllItems(List<ShoppingItemDto> shoppingItemList) throws ItemBarcodeAlreadyExistsException {
+    public void addAllItems(List<ShoppingItemDto> shoppingItemList, String userid) throws ItemBarcodeAlreadyExistsException {
         for (ShoppingItemDto shoppingItemDto : shoppingItemList) {
             ItemDto itemDto = shoppingItemDto.getItem();
             TransactionDto transactionDto = shoppingItemDto.getTransaction();
