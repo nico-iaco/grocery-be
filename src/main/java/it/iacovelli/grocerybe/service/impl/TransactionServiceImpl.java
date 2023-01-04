@@ -18,7 +18,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-//@assert x == 4
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;

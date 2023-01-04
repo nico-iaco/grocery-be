@@ -1,5 +1,7 @@
 # Grocery-be
 
+[![Build and Push Image to Google Cloud Platform](https://github.com/nico-iaco/grocery-be/actions/workflows/gcp.yml/badge.svg)](https://github.com/nico-iaco/grocery-be/actions/workflows/gcp.yml)
+
 ## Description
 
 This app is like an inventory for your groceries. You can track your groceries and their expiration dates. You can also add new items to your inventory.

@@ -18,15 +18,18 @@ public abstract class ItemMapper {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Mapping(target = "nextExpirationDate", ignore = true)
     @Mapping(target = "quantity", ignore = true)
     @Mapping(target = "unit", ignore = true)
     @Mapping(target = "availableQuantity", ignore = true)
     public abstract ItemDto entityToDto(Item item);
 
+    @Mapping(target = "foodDetail", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "transactionList", ignore = true)
     public abstract Item dtoToEntity(ItemDto itemDto);
 
+    @Mapping(target = "foodDetail", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "transactionList", ignore = true)

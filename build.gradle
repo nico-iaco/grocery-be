@@ -34,7 +34,6 @@ graalvmNative {
             buildArgs.add('--trace-class-initialization=ch.qos.logback.classic.Logger')
             buildArgs.add('--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase$Worker')
             buildArgs.add('--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService')
-            requiredVersion = '22.3'
         }
     }
 }
@@ -47,7 +46,6 @@ dependencies {
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.14.0'
     implementation 'com.google.firebase:firebase-admin:9.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
     implementation 'org.springframework.cloud:spring-cloud-bindings:1.10.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.0.0'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
@@ -62,7 +60,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 

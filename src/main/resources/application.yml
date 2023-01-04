@@ -7,6 +7,7 @@ spring:
         hikari:
             max-lifetime: 300000
     jpa:
+        defer-datasource-initialization: true
         show-sql: false
         hibernate:
             ddl-auto: update
