@@ -34,6 +34,7 @@ graalvmNative {
             buildArgs.add('--trace-class-initialization=ch.qos.logback.classic.Logger')
             buildArgs.add('--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase$Worker')
             buildArgs.add('--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback')
+            requiredVersion = '22.3'
         }
     }
 }
@@ -56,6 +57,7 @@ dependencies {
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1")
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
