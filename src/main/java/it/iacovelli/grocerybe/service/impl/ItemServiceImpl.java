@@ -13,14 +13,13 @@ import it.iacovelli.grocerybe.repository.ItemRepository;
 import it.iacovelli.grocerybe.service.FoodDetailsIntegratorService;
 import it.iacovelli.grocerybe.service.ItemService;
 import it.iacovelli.grocerybe.service.TransactionService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
