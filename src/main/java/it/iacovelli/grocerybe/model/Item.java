@@ -29,6 +29,9 @@ public class Item {
 
     private String name;
 
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+    private FoodDetail foodDetail;
+
     @OneToMany
     @ToString.Exclude
     private List<Transaction> transactionList = new ArrayList<>();

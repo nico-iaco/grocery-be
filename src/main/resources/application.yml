@@ -5,7 +5,7 @@ spring:
         password: ${DB_PASSWORD}
         driverClassName: org.postgresql.Driver
         hikari:
-            max-lifetime: 1800000
+            max-lifetime: 300000
     jpa:
         show-sql: false
         hibernate:
@@ -13,9 +13,7 @@ spring:
         generate-ddl: true
     cloud:
         gcp:
-            logging:
-                enabled: true
-            project-id: foody-me
+            project-id: ${PROJECT_ID}
 springdoc:
     enable-native-support: true
 grocery-be:

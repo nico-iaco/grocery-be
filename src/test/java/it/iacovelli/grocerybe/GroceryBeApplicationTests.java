@@ -23,7 +23,8 @@ class GroceryBeApplicationTests {
             "TEST",
             0,
             0,
-            "g"
+            "g",
+            LocalDate.now()
     );
 
     private final TransactionDto transactionDto = new TransactionDto(
