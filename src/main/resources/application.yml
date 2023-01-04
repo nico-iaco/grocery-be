@@ -14,6 +14,8 @@ spring:
     cloud:
         gcp:
             project-id: ${PROJECT_ID}
+springdoc:
+    enable-native-support: true
 grocery-be:
     external:
         food-details-integrator-be:

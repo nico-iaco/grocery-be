@@ -3,13 +3,13 @@ package it.iacovelli.grocerybe.mapper;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.repository.TransactionRepository;
+import jakarta.transaction.Transactional;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Mapper(componentModel = "spring")
@@ -18,13 +18,18 @@ public abstract class ItemMapper {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Mapping(target = "quantity", ignore = true)
+    @Mapping(target = "unit", ignore = true)
+    @Mapping(target = "availableQuantity", ignore = true)
     public abstract ItemDto entityToDto(Item item);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "transactionList", ignore = true)
     public abstract Item dtoToEntity(ItemDto itemDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "transactionList", ignore = true)
     public abstract void updateItem(ItemDto itemDto, @MappingTarget Item item);
 
     @BeforeMapping

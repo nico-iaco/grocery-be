@@ -8,10 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.Duration;
 
-@SpringBootApplication(proxyBeanMethods = false)
+@SpringBootApplication()
 @OpenAPIDefinition(info = @Info(title = "Grocery API", version = "1.0.0",
         description = "Api of an app to avoid food waste"),
         servers = {@Server(url = "/", description = "Default URL")})
