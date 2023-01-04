@@ -33,7 +33,7 @@ graalvmNative {
         main {
             buildArgs.add('--trace-class-initialization=ch.qos.logback.classic.Logger')
             buildArgs.add('--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase$Worker')
-            buildArgs.add('--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback')
+            buildArgs.add('--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService')
             requiredVersion = '22.3'
         }
     }
