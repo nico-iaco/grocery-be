@@ -5,7 +5,7 @@ spring:
         password: ${DB_PASSWORD}
         driverClassName: org.postgresql.Driver
         hikari:
-            max-lifetime: 300000
+            idle-timeout: ${DB_TIMEOUT}
     jpa:
         defer-datasource-initialization: true
         show-sql: false

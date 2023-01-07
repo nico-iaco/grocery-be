@@ -46,6 +46,7 @@ docker run -p 8080:8080 ghcr.io/nico-iaco/grocery-be:latest -e {All the environm
 | DB_USER               | The user of the database                 |                       |
 | DB_PASSWORD           | The password of the database             |                       |
 | DB_NAME               | The name of the database                 |                       |
+| DB_TIMEOUT            | Database timeout                         |                       |
 | FOOD_DETAILS_BASE_URL | Base url for food-details-integration-be | http://localhost:8081 |
 
 ## Database
