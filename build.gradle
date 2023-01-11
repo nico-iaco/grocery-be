@@ -40,10 +40,7 @@ graalvmNative {
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-actuator')
     //implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
-	}
-	implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation('org.springframework.boot:spring-boot-starter-web')
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.14.0'
     implementation 'com.google.firebase:firebase-admin:9.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
