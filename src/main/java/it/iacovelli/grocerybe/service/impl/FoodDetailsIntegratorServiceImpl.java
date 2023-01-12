@@ -5,7 +5,8 @@ import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.service.FoodDetailsIntegratorService;
 import it.iacovelli.grocerybe.utils.GoogleCredentialsUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
 public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorService {
 
@@ -27,7 +27,7 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
 
     private final CircuitBreakerFactory circuitBreakerFactory;
 
-    //private static final Log LOGGER = LogFactory.getLog(FoodDetailsIntegratorServiceImpl.class);
+    private static final Log LOGGER = LogFactory.getLog(FoodDetailsIntegratorServiceImpl.class);
 
     @Value("${grocery-be.external.food-details-integrator-be.details-path}")
     private String foodDetailsEndpoint;
@@ -38,7 +38,7 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
     @Override
     public FoodDetailDto getFoodDetails(String barcode) {
         CircuitBreaker foodDetails = circuitBreakerFactory.create("foodDetails");
-        log.info("Calling food details integrator BE with endpoint: " + foodDetailsEndpoint);
+        LOGGER.info("Calling food details integrator BE with endpoint: " + foodDetailsEndpoint);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(googleCredentialsUtils.getAccessToken());
 
@@ -57,7 +57,7 @@ public class FoodDetailsIntegratorServiceImpl implements FoodDetailsIntegratorSe
     @Override
     public Float getKcalConsumed(String barcode, float quantity) {
         CircuitBreaker kcalConsumed = circuitBreakerFactory.create("kcalConsumed");
-        log.info("Calling food details integrator BE with endpoint: " + kcalConsumedEndpoint);
+        LOGGER.info("Calling food details integrator BE with endpoint: " + kcalConsumedEndpoint);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(googleCredentialsUtils.getAccessToken());
