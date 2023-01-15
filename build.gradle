@@ -21,10 +21,10 @@ repositories {
 }
 
 bootBuildImage {
-    builder = 'paketobuildpacks/builder:tiny'
     environment = [
             'BP_NATIVE_IMAGE': 'true',
             'BP_JVM_VERSION': '17',
+            'BP_NATIVE_IMAGE_BUILD_ARGUMENTS': '--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService',
     ]
 }
 

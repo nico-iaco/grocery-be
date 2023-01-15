@@ -101,6 +101,8 @@ public class ItemServiceImpl implements ItemService {
     public void deleteItem(UUID id, String userid) throws ItemNotFoundException {
         Item item = itemRepository.findItemByIdAndUserId(id, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         if(item.getFoodDetail() != null) {
+            item.getTransactionList()
+                    .forEach(transaction -> transactionService.deleteItemTransaction(item.getId(), transaction.getId(), userid));
             foodDetailRepository.delete(item.getFoodDetail());
         }
         itemRepository.delete(item);
