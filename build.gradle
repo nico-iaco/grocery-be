@@ -26,6 +26,7 @@ bootBuildImage {
             'BP_NATIVE_IMAGE': 'true',
             'BP_JVM_VERSION': '17',
             'BP_NATIVE_IMAGE_BUILD_ARGUMENTS': '--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService',
+            'BP_BINARY_COMPRESSION_METHOD': 'upx',
     ]
 }
 
@@ -60,7 +61,6 @@ dependencies {
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1")
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
