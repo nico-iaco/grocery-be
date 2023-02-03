@@ -21,6 +21,7 @@ repositories {
 }
 
 bootBuildImage {
+    builder = 'paketobuildpacks/builder:tiny'
     environment = [
             'BP_NATIVE_IMAGE': 'true',
             'BP_JVM_VERSION': '17',
