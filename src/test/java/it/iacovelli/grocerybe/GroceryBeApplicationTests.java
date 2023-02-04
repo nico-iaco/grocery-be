@@ -91,6 +91,17 @@ class GroceryBeApplicationTests {
         assert itemTransactions.size() == 1;
     }
 
+    @Test
+    void updateTransaction() {
+        ItemDto savedItemDto = itemService.addItem(itemDto);
+        TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId(), itemDto.getUserId());
+        savedTransaction.setSeller("VENDOR-UPDATED");
+        TransactionDto updatedTransaction = transactionService.updateItemTransaction(savedItemDto.getId(), savedTransaction, itemDto.getUserId());
+        deleteTransaction(savedTransaction.getId(), savedItemDto.getId());
+        deleteItem(savedItemDto.getId());
+        assert updatedTransaction.getSeller().equals(savedTransaction.getSeller()) && updatedTransaction.getExpirationDate().equals(savedTransaction.getExpirationDate());
+    }
+
     private void deleteItem(UUID itemId) {
         itemService.deleteItem(itemId, itemDto.getUserId());
     }

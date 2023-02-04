@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,12 +36,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable, String userId) {
-        List<TransactionDto> transactionDtoList = new ArrayList<>();
         Item item = getItemFromId(itemId, userId);
-        transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item).forEach(transaction -> transactionDtoList.add(transactionMapper.entityToDto(transaction)));
-        if (onlyAvailable) {
-            transactionDtoList.removeIf(transactionDto -> transactionDto.getAvailableQuantity() == 0);
-        }
+        List<TransactionDto> transactionDtoList = transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item)
+                .stream()
+                .filter(transaction -> !onlyAvailable || transaction.getAvailableQuantity() > 0)
+                .map(transactionMapper::entityToDto)
+                .toList();
         return transactionDtoList;
     }
 
@@ -55,7 +54,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional
     public TransactionDto updateItemTransaction(UUID itemId, TransactionDto transactionDto, String userId) {
         Item item = getItemFromId(itemId, userId);
         Transaction transaction = transactionRepository.findTransactionByIdAndItem(transactionDto.getId(), item)
