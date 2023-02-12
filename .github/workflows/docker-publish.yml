@@ -13,6 +13,8 @@ on:
     paths-ignore:
       - 'k8s/**'
       - '.github/workflows/gradle-test.yml'
+      - '.github/workflows/gcp.yml'
+      - '.github/workflows/codacy.yml'
       - 'docs/**'
       - 'README.md'
       - 'LICENSE'

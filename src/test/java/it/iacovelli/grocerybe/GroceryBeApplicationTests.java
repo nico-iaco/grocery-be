@@ -1,5 +1,7 @@
 package it.iacovelli.grocerybe;
 
+import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
+import it.iacovelli.grocerybe.exception.ItemNotFoundException;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
 import it.iacovelli.grocerybe.service.ItemService;
@@ -11,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class GroceryBeApplicationTests {
@@ -56,12 +60,31 @@ class GroceryBeApplicationTests {
         assert savedItemDto.getName().equals(itemDto.getName()) && savedItemDto.getBarcode().equals(itemDto.getBarcode());
     }
 
+    @Test()
+    void throwItemAlreadyExists() {
+        ItemDto savedItemDto = itemService.addItem(itemDto);
+        assertThrows(ItemBarcodeAlreadyExistsException.class, () -> itemService.addItem(itemDto));
+        deleteItem(savedItemDto.getId());
+    }
+
     @Test
     void getItemSaved() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
         ItemDto item = itemService.getItem(savedItemDto.getId(), savedItemDto.getUserId());
         deleteItem(savedItemDto.getId());
         assert item.equals(savedItemDto);
+    }
+
+    @Test
+    void getItemNotFoundException() {
+        assertThrows(ItemNotFoundException.class, () -> itemService.getItem(UUID.randomUUID(), itemDto.getUserId()));
+    }
+
+    @Test
+    void getItemWithWrongUserId() {
+        ItemDto savedItemDto = itemService.addItem(itemDto);
+        assertThrows(ItemNotFoundException.class, () -> itemService.getItem(savedItemDto.getId(), "WRONG-USER-ID"));
+        deleteItem(savedItemDto.getId());
     }
 
     @Test
