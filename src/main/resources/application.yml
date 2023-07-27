@@ -4,8 +4,6 @@ spring:
         username: ${DB_USER}
         password: ${DB_PASSWORD}
         driverClassName: org.postgresql.Driver
-        hikari:
-            idle-timeout: ${DB_TIMEOUT}
     jpa:
         defer-datasource-initialization: true
         show-sql: false

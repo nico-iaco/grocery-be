@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,26 +59,18 @@ public class ItemServiceImpl implements ItemService {
         for (ShoppingItemDto shoppingItemDto : shoppingItemList) {
             ItemDto itemDto = shoppingItemDto.getItem();
             TransactionDto transactionDto = shoppingItemDto.getTransaction();
-            Item item;
-            if (itemRepository.countItemsByBarcode(itemDto.getBarcode()) > 0) {
-                item = itemRepository
-                        .findItemByBarcode(itemDto.getBarcode())
-                        .orElseThrow(() -> new ItemNotFoundException("The item with barcode " + itemDto.getBarcode() + " was not found"));
-            } else {
-                item = itemMapper.dtoToEntity(itemDto);
-            }
-            item = itemRepository.save(item);
-            transactionService.addTransaction(transactionDto, item.getId(), item.getUserId());
+            ItemDto savedItemDto = addItem(itemDto);
+            transactionService.addTransaction(transactionDto, savedItemDto.getId(), savedItemDto.getUserId());
         }
     }
 
     @Override
     public List<ItemDto> getAllItems(boolean onlyAvailable, String userId) {
-        List<ItemDto> itemsDtoList = new ArrayList<>();
-        itemRepository.findAllByUserId(userId).forEach(item -> itemsDtoList.add(itemMapper.entityToDto(item)));
-        if (onlyAvailable) {
-            itemsDtoList.removeIf(itemDto -> itemDto.getAvailableQuantity() == 0);
-        }
+        List<ItemDto> itemsDtoList = itemRepository.findAllByUserId(userId)
+                .stream()
+                .map(itemMapper::entityToDto)
+                .filter(item -> !onlyAvailable || item.getAvailableQuantity() > 0)
+                .toList();
         return itemsDtoList;
     }
 
@@ -100,8 +91,12 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteItem(UUID id, String userid) throws ItemNotFoundException {
         Item item = itemRepository.findItemByIdAndUserId(id, userid).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
-        if(item.getFoodDetail() != null) {
+        if (item.getFoodDetail() != null) {
             foodDetailRepository.delete(item.getFoodDetail());
+        }
+        if (!item.getTransactionList().isEmpty()) {
+            item.getTransactionList()
+                    .forEach(transaction -> transactionService.deleteItemTransaction(item.getId(), transaction.getId(), userid));
         }
         itemRepository.delete(item);
     }
@@ -144,7 +139,7 @@ public class ItemServiceImpl implements ItemService {
         return itemStatisticWrapperDto;
     }
 
-    void saveFoodDetail(FoodDetailDto foodDetailDto, Item item) {
+    private void saveFoodDetail(FoodDetailDto foodDetailDto, Item item) {
         boolean isPresent = foodDetailRepository.findFoodDetailByItem(item).isPresent();
         if (!isPresent) {
             FoodDetail foodDetail = foodDetailMapper.dtoToEntity(foodDetailDto, item);

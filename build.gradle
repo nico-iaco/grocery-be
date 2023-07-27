@@ -25,30 +25,40 @@ bootBuildImage {
     environment = [
             'BP_NATIVE_IMAGE': 'true',
             'BP_JVM_VERSION': '17',
+            'BP_NATIVE_IMAGE_BUILD_ARGUMENTS': '--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService',
+            'BP_BINARY_COMPRESSION_METHOD': 'upx',
     ]
 }
 
 graalvmNative {
     binaries {
         main {
-            buildArgs.add('--trace-class-initialization=ch.qos.logback.classic.Logger')
-            buildArgs.add('--trace-object-instantiation=ch.qos.logback.core.AsyncAppenderBase$Worker')
             buildArgs.add('--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService')
         }
     }
 }
 
 
+
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-actuator')
+    implementation('org.springframework.boot:spring-boot-starter-actuator') {
+        exclude group: 'io.micrometer', module: 'micrometer-core'
+    }
     //implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
+        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
+    }
+    implementation "org.apache.tomcat.experimental:tomcat-embed-programmatic:${dependencyManagement.importedProperties["tomcat.version"]}"
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'org.apache.logging.log4j:log4j:2.19.0'
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.0.2'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     compileOnly 'org.projectlombok:lombok'
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -3,6 +3,18 @@ name: Build and Push Image to Google Cloud Platform
 on:
     push:
         branches: [ master ]
+        paths-ignore:
+            - 'k8s/**'
+            - '.github/workflows/gradle-test.yml'
+            - '.github/workflows/docker-publish.yml'
+            - '.github/workflows/codacy.yml'
+            - 'docs/**'
+            - 'README.md'
+            - 'LICENSE'
+            - 'CHANGELOG.md'
+            - 'CODE_OF_CONDUCT.md'
+            - 'CONTRIBUTING.md'
+            - 'SECURITY.md'
 jobs:
     build-push-gcr:
         name: Build and Push to GCP
@@ -14,8 +26,8 @@ jobs:
             REPOSITORY: foody-ar
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
-            -   uses: benjlevesque/short-sha@v1.2
+              uses: actions/checkout@v3
+            -   uses: benjlevesque/short-sha@v2.1
                 id: short-sha
                 with:
                     length: 7
@@ -25,8 +37,15 @@ jobs:
             -   uses: google-github-actions/setup-gcloud@v1
                 with:
                   project_id: ${{ env.PROJECT_ID }}
-            - name: Build Docker Image
-              run: docker build -t $IMAGE_NAME:latest .
+            - name: Set up JDK 17
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+            - name: Setup Gradle
+              uses: gradle/gradle-build-action@v2
+            - name: Execute Gradle bootBuildImage task
+              run: ./gradlew bootBuildImage --imageName=$IMAGE_NAME:latest
               env:
                   SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
             - name: Configure Docker Client
