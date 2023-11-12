@@ -50,7 +50,7 @@ dependencies {
         exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
     }
     implementation "org.apache.tomcat.experimental:tomcat-embed-programmatic:${dependencyManagement.importedProperties["tomcat.version"]}"
-    implementation 'com.google.firebase:firebase-admin:9.1.1'
+
     implementation 'org.apache.logging.log4j:log4j:2.19.0'
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'

@@ -6,10 +6,12 @@ import com.google.firebase.FirebaseOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
 
 @Configuration
+@Profile("gcp")
 public class FirebaseConfig {
 
     @Value("${spring.cloud.gcp.project-id}")

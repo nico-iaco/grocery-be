@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && gradle nativeCompile
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && gradle -Dspring.profiles.active=default nativeCompile
 
 FROM oraclelinux:9-slim
 WORKDIR /app
