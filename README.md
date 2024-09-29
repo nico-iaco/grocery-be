@@ -1,5 +1,7 @@
 # Grocery-be
 
+[![Build and Push Image to Google Cloud Platform](https://github.com/nico-iaco/grocery-be/actions/workflows/gcp.yml/badge.svg)](https://github.com/nico-iaco/grocery-be/actions/workflows/gcp.yml)
+
 ## Description
 
 This app is like an inventory for your groceries. You can track your groceries and their expiration dates. You can also add new items to your inventory.
@@ -38,13 +40,13 @@ docker run -p 8080:8080 ghcr.io/nico-iaco/grocery-be:latest -e {All the environm
 
 ## Environment variables
 
-| Name                                                    | Description                              | Default value         |
-|---------------------------------------------------------|------------------------------------------|-----------------------|
-| DB_URL                                                  | The host of the database                 |                       |
-| DB_USER                                                 | The user of the database                 |                       |
-| DB_PASSWORD                                             | The password of the database             |                       |
-| DB_NAME                                                 | The name of the database                 |                       |
-| grocery-be.external.food-details-integrator-be.base-url | Base url for food-details-integration-be | http://localhost:8081 |
+| Name                  | Description                              | Default value         |
+|-----------------------|------------------------------------------|-----------------------|
+| DB_URL                | The host of the database                 |                       |
+| DB_USER               | The user of the database                 |                       |
+| DB_PASSWORD           | The password of the database             |                       |
+| DB_NAME               | The name of the database                 |                       |
+| FOOD_DETAILS_BASE_URL | Base url for food-details-integration-be | http://localhost:8081 |
 
 ## Database
 
@@ -53,6 +55,10 @@ The database is created automatically by the application. The database is create
 - item
 - transaction
 - item_transaction_list
+- food_detail
+
+This is the schema of the database:
+![Database schema](./docs/groceryBeErDiagram.png)
 
 However, here is the DDL for the database:
 
@@ -81,7 +87,7 @@ create table transaction
     seller             varchar(255),
     item_id            uuid
         constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
-            references item,
+            references item
 );
 
 create table item_transaction_list
@@ -95,6 +101,18 @@ create table item_transaction_list
         constraint fk3c5txed590yrvt06opdmmc3g2
             references transaction
 );
+
+create table food_detail
+(
+    id          uuid not null
+        primary key,
+    item_id     uuid
+        constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
+            references item,
+    generic_name varchar(255),
+    image_nutrition_url varchar(255),
+    image_url varchar(255)
+)
 
 
 ```

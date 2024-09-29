@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -28,5 +29,7 @@ public class ItemDto implements Serializable {
     private double availableQuantity;
 
     private String unit;
+
+    private LocalDate nextExpirationDate;
 
 }

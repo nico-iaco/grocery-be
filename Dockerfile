@@ -1,11 +1,11 @@
-FROM ghcr.io/nico-iaco/graalvm-gradle-docker-build:v1.0.0 as builder
+FROM ghcr.io/nico-iaco/graalvm-gradle-docker-build:v1.1.0 as builder
 WORKDIR /app
 
 COPY . .
 
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && gradle nativeCompile
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && gradle -Dspring.profiles.active=default nativeCompile
 
-FROM oraclelinux:7-slim
+FROM oraclelinux:9-slim
 WORKDIR /app
 
 COPY --from=builder /app/build/native/nativeCompile/grocery-be ./grocery-be

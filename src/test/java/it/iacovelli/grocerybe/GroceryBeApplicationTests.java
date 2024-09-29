@@ -1,5 +1,7 @@
 package it.iacovelli.grocerybe;
 
+import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
+import it.iacovelli.grocerybe.exception.ItemNotFoundException;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
 import it.iacovelli.grocerybe.service.ItemService;
@@ -12,6 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SpringBootTest
 class GroceryBeApplicationTests {
 
@@ -23,7 +27,8 @@ class GroceryBeApplicationTests {
             "TEST",
             0,
             0,
-            "g"
+            "g",
+            LocalDate.now()
     );
 
     private final TransactionDto transactionDto = new TransactionDto(
@@ -55,12 +60,31 @@ class GroceryBeApplicationTests {
         assert savedItemDto.getName().equals(itemDto.getName()) && savedItemDto.getBarcode().equals(itemDto.getBarcode());
     }
 
+    @Test()
+    void throwItemAlreadyExists() {
+        ItemDto savedItemDto = itemService.addItem(itemDto);
+        assertThrows(ItemBarcodeAlreadyExistsException.class, () -> itemService.addItem(itemDto));
+        deleteItem(savedItemDto.getId());
+    }
+
     @Test
     void getItemSaved() {
         ItemDto savedItemDto = itemService.addItem(itemDto);
         ItemDto item = itemService.getItem(savedItemDto.getId(), savedItemDto.getUserId());
         deleteItem(savedItemDto.getId());
         assert item.equals(savedItemDto);
+    }
+
+    @Test
+    void getItemNotFoundException() {
+        assertThrows(ItemNotFoundException.class, () -> itemService.getItem(UUID.randomUUID(), itemDto.getUserId()));
+    }
+
+    @Test
+    void getItemWithWrongUserId() {
+        ItemDto savedItemDto = itemService.addItem(itemDto);
+        assertThrows(ItemNotFoundException.class, () -> itemService.getItem(savedItemDto.getId(), "WRONG-USER-ID"));
+        deleteItem(savedItemDto.getId());
     }
 
     @Test
@@ -88,6 +112,17 @@ class GroceryBeApplicationTests {
         deleteTransaction(savedTransaction.getId(), savedItemDto.getId());
         deleteItem(savedItemDto.getId());
         assert itemTransactions.size() == 1;
+    }
+
+    @Test
+    void updateTransaction() {
+        ItemDto savedItemDto = itemService.addItem(itemDto);
+        TransactionDto savedTransaction = transactionService.addTransaction(transactionDto, savedItemDto.getId(), itemDto.getUserId());
+        savedTransaction.setSeller("VENDOR-UPDATED");
+        TransactionDto updatedTransaction = transactionService.updateItemTransaction(savedItemDto.getId(), savedTransaction, itemDto.getUserId());
+        deleteTransaction(savedTransaction.getId(), savedItemDto.getId());
+        deleteItem(savedItemDto.getId());
+        assert updatedTransaction.getSeller().equals(savedTransaction.getSeller()) && updatedTransaction.getExpirationDate().equals(savedTransaction.getExpirationDate());
     }
 
     private void deleteItem(UUID itemId) {

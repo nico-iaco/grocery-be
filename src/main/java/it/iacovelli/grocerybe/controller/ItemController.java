@@ -7,11 +7,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.iacovelli.grocerybe.model.dto.FoodDetailDto;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
-import it.iacovelli.grocerybe.model.dto.ItemStatisticDto;
+import it.iacovelli.grocerybe.model.dto.ItemStatisticWrapperDto;
 import it.iacovelli.grocerybe.model.dto.TransactionDto;
+import it.iacovelli.grocerybe.model.request.ShoppingCartRequest;
 import it.iacovelli.grocerybe.model.response.BaseResponse;
 import it.iacovelli.grocerybe.service.ItemService;
 import it.iacovelli.grocerybe.service.TransactionService;
+import it.iacovelli.grocerybe.utils.FirebaseUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,21 +21,39 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/api/item")
 @RequiredArgsConstructor
 public class ItemController extends BaseController {
 
     private final ItemService itemService;
 
     private final TransactionService transactionService;
+    
+    private final FirebaseUtils firebaseUtils;
 
     @Operation(summary = "Add a new item")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item added") })
     @PostMapping("/")
-    public BaseResponse<ItemDto> addItem(@RequestBody ItemDto itemDto) {
+    public BaseResponse<ItemDto> addItem(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ItemDto itemDto) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
+        itemDto.setUserId(userId);
         ItemDto dto = itemService.addItem(itemDto);
         return new BaseResponse<>(dto, null);
+    }
+
+    @Operation(summary = "Add all items")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Items added") })
+    @PostMapping("/all")
+    public BaseResponse<Void> addItems(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ShoppingCartRequest shoppingCartRequest) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
+        itemService.addAllItems(shoppingCartRequest.getShoppingItems(), userId);
+        return new BaseResponse<>(null, null);
     }
 
     @Operation(summary = "Get all items")
@@ -42,7 +62,8 @@ public class ItemController extends BaseController {
     @GetMapping("/")
     public BaseResponse<List<ItemDto>> getAllItems(
             @Parameter(description = "flag for getting only available items") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
-            @RequestHeader("iv-user") String userId) {
+            @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         List<ItemDto> items = itemService.getAllItems(onlyAvailable, userId);
         return new BaseResponse<>(items, null);
     }
@@ -51,8 +72,9 @@ public class ItemController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items statistics found")})
     @GetMapping("/statistics")
-    public BaseResponse<ItemStatisticDto> getStatistics(@RequestHeader("iv-user") String userId) {
-        ItemStatisticDto itemsStatistic = itemService.getItemsStatistic(userId);
+    public BaseResponse<ItemStatisticWrapperDto> getStatistics(@RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
+        ItemStatisticWrapperDto itemsStatistic = itemService.getItemsStatistic(userId);
         return new BaseResponse<>(itemsStatistic, null);
     }
 
@@ -61,7 +83,8 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Item found")})
     @GetMapping("/{id}")
     public BaseResponse<ItemDto> getItem(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
-                                         @RequestHeader("iv-user") String userId) {
+                                         @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         ItemDto item = itemService.getItem(id, userId);
         return new BaseResponse<>(item, null);
     }
@@ -72,7 +95,8 @@ public class ItemController extends BaseController {
     @PatchMapping("/{id}")
     public BaseResponse<ItemDto> updateItem(@Parameter(description = "id of the item to be updated") @PathVariable UUID id,
                                             @RequestBody ItemDto itemDto,
-                                            @RequestHeader("iv-user") String userId) {
+                                            @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         ItemDto dto = itemService.updateItem(id, itemDto, userId);
         return new BaseResponse<>(dto, null);
     }
@@ -83,7 +107,8 @@ public class ItemController extends BaseController {
                     content = { @Content(mediaType = "application/json") })})
     @DeleteMapping("/{id}")
     public BaseResponse<String> deleteItem(@Parameter(description = "id of the item to be deleted") @PathVariable UUID id,
-                                           @RequestHeader("iv-user") String userId) {
+                                           @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         itemService.deleteItem(id, userId);
         return new BaseResponse<>("Item deleted", null);
     }
@@ -93,7 +118,8 @@ public class ItemController extends BaseController {
             @ApiResponse(responseCode = "200", description = "Food detail found")})
     @GetMapping("/{id}/detail")
     public BaseResponse<FoodDetailDto> getFoodDetail(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
-                                                     @RequestHeader("iv-user") String userId) {
+                                                     @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         FoodDetailDto foodDetail = itemService.getFoodDetail(id, userId);
         return new BaseResponse<>(foodDetail, null);
     }
@@ -104,7 +130,8 @@ public class ItemController extends BaseController {
     @GetMapping("/{id}/kcal")
     public BaseResponse<Float> getKcalConsumedForQuantity(@Parameter(description = "id of the item to be searched") @PathVariable UUID id,
                                                           @Parameter(description = "quantity of the item to be searched") @RequestParam float quantity,
-                                                          @RequestHeader("iv-user") String userId) {
+                                                          @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         float kcal = itemService.getKcalConsumedForItemAndQuantity(id, quantity, userId);
         return new BaseResponse<>(kcal, null);
     }
@@ -115,7 +142,8 @@ public class ItemController extends BaseController {
     @PostMapping("/{id}/transaction")
     public BaseResponse<TransactionDto> addTransactionToItem(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable("id") UUID itemId,
                                                              @RequestBody TransactionDto transactionDto,
-                                                             @RequestHeader("iv-user") String userId) {
+                                                             @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         transactionDto.setAvailableQuantity(transactionDto.getQuantity());
         TransactionDto dto = transactionService.addTransaction(transactionDto, itemId, userId);
         return new BaseResponse<>(dto, null);
@@ -128,7 +156,8 @@ public class ItemController extends BaseController {
     public BaseResponse<List<TransactionDto>> getItemTransactions(
             @Parameter(description = "id of the item from which get the transactions") @PathVariable("id") UUID itemId,
             @Parameter(description = "flag for getting only available transaction") @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
-            @RequestHeader("iv-user") String userId) {
+            @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         List<TransactionDto> itemTransactions = transactionService.getItemTransactions(itemId, onlyAvailable, userId);
         return new BaseResponse<>(itemTransactions, null);
     }
@@ -140,7 +169,8 @@ public class ItemController extends BaseController {
     @GetMapping("/{itemId}/transaction/{transactionId}")
     public BaseResponse<TransactionDto> getItemTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable UUID itemId,
                                                            @Parameter(description = "id of the transaction searched") @PathVariable UUID transactionId,
-                                                           @RequestHeader("iv-user") String userId) {
+                                                           @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         TransactionDto itemTransaction = transactionService.getItemTransaction(itemId, transactionId, userId);
         return new BaseResponse<>(itemTransaction, null);
     }
@@ -151,7 +181,8 @@ public class ItemController extends BaseController {
     @PatchMapping("/{id}/transaction")
     public BaseResponse<TransactionDto> updateTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable("id") UUID itemId,
                                                           @RequestBody TransactionDto transactionDto,
-                                                          @RequestHeader("iv-user") String userId) {
+                                                          @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         TransactionDto dto = transactionService.updateItemTransaction(itemId, transactionDto, userId);
         return new BaseResponse<>(dto, null);
     }
@@ -162,7 +193,8 @@ public class ItemController extends BaseController {
     @DeleteMapping("/{itemId}/transaction/{transactionId}")
     public BaseResponse<String> deleteTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable UUID itemId,
                                                   @Parameter(description = "id of the transaction to be deleted") @PathVariable UUID transactionId,
-                                                  @RequestHeader("iv-user") String userId) {
+                                                  @RequestHeader("Authorization") String token) {
+        String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         transactionService.deleteItemTransaction(itemId, transactionId, userId);
         return new BaseResponse<>("Transaction deleted", null);
     }

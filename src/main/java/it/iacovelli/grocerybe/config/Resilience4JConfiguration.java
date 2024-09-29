@@ -22,7 +22,7 @@ public class Resilience4JConfiguration {
                 .slidingWindowSize(2)
                 .build();
         TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
-                .timeoutDuration(Duration.ofSeconds(1))
+                .timeoutDuration(Duration.ofSeconds(5))
                 .build();
 
         return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)

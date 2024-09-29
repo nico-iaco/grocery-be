@@ -4,16 +4,20 @@ spring:
         username: ${DB_USER}
         password: ${DB_PASSWORD}
         driverClassName: org.postgresql.Driver
-        hikari:
-            max-lifetime: 1800000
     jpa:
+        defer-datasource-initialization: true
         show-sql: false
         hibernate:
             ddl-auto: update
         generate-ddl: true
+    cloud:
+        gcp:
+            project-id: ${PROJECT_ID}
+springdoc:
+    enable-native-support: true
 grocery-be:
     external:
         food-details-integrator-be:
-            base-url: http://localhost:8081
+            base-url: ${FOOD_DETAILS_BASE_URL}
             details-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}
             kcal-consumed-path: ${grocery-be.external.food-details-integrator-be.base-url}/food/{barcode}/kcal?&quantity={quantity}

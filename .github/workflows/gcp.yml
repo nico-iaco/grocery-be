@@ -1,0 +1,59 @@
+---
+name: Build and Push Image to Google Cloud Platform
+on:
+    push:
+        branches: [ master ]
+        paths-ignore:
+            - 'k8s/**'
+            - '.github/workflows/gradle-test.yml'
+            - '.github/workflows/docker-publish.yml'
+            - '.github/workflows/codacy.yml'
+            - 'docs/**'
+            - 'README.md'
+            - 'LICENSE'
+            - 'CHANGELOG.md'
+            - 'CODE_OF_CONDUCT.md'
+            - 'CONTRIBUTING.md'
+            - 'SECURITY.md'
+jobs:
+    build-push-gcr:
+        name: Build and Push to GCP
+        runs-on: ubuntu-latest
+        env:
+            IMAGE_NAME: grocery-be
+            LOCATION: us-central1-docker.pkg.dev
+            PROJECT_ID: foody-me
+            REPOSITORY: foody-ar
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            -   uses: benjlevesque/short-sha@v2.1
+                id: short-sha
+                with:
+                    length: 7
+            -   uses: google-github-actions/auth@v1
+                with:
+                    credentials_json: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+            -   uses: google-github-actions/setup-gcloud@v1
+                with:
+                  project_id: ${{ env.PROJECT_ID }}
+            - name: Set up JDK 17
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+            - name: Setup Gradle
+              uses: gradle/gradle-build-action@v2
+            - name: Execute Gradle bootBuildImage task
+              run: ./gradlew -Dspring.profiles.active=gcp bootBuildImage --imageName=$IMAGE_NAME:latest
+              env:
+                  SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+            - name: Configure Docker Client
+              run: |-
+                  gcloud auth configure-docker $LOCATION --quiet
+            - name: Push Docker Image to Artifact Registry
+              run: |-
+                  docker tag $IMAGE_NAME:latest $LOCATION/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+                  docker tag $IMAGE_NAME:latest $LOCATION/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$SHA
+                  docker push $LOCATION/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+                  docker push $LOCATION/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$SHA
