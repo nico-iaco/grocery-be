@@ -7,7 +7,9 @@ configMapGenerator:
     - name: grocery-be-properties
       literals:
           - DB_URL=192.168.86.5
+          - DB_PORT=5432
           - DB_USER=grocerybe
+          - DB_NAME=grocery
           - FOOD_DETAILS_BASE_URL=http://food-details-integrator-be-service.grocery.svc.cluster.local:8080
 secretGenerator:
     - name: grocery-be-secrets

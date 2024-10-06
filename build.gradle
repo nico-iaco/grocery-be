@@ -1,7 +1,7 @@
 plugins {
-    id 'org.springframework.boot' version '3.1.2'
-    id 'io.spring.dependency-management' version '1.1.2'
-    id 'org.graalvm.buildtools.native' version '0.9.23'
+    id "org.springframework.boot" version "3.3.4"
+    id "io.spring.dependency-management" version "1.1.6"
+    id 'org.graalvm.buildtools.native' version '0.10.3'
     id 'java'
 }
 
@@ -17,15 +17,12 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/release' }
+    google()
+    gradlePluginPortal()
 }
 
 bootBuildImage {
-    builder = 'paketobuildpacks/builder:tiny'
     environment = [
-            'BP_NATIVE_IMAGE': 'true',
-            'BP_JVM_VERSION': '17',
-            'BP_NATIVE_IMAGE_BUILD_ARGUMENTS': '--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService',
             'BP_BINARY_COMPRESSION_METHOD': 'upx',
     ]
 }
@@ -41,37 +38,30 @@ graalvmNative {
 
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-actuator') {
-        exclude group: 'io.micrometer', module: 'micrometer-core'
-    }
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     //implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
-        exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
-    }
-    implementation "org.apache.tomcat.experimental:tomcat-embed-programmatic:${dependencyManagement.importedProperties["tomcat.version"]}"
-
-    implementation 'org.apache.logging.log4j:log4j:2.19.0'
-    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.0.2'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:3.1.2'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.mapstruct:mapstruct:1.6.2'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
     compileOnly 'org.projectlombok:lombok'
-    //developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly "org.springframework.boot:spring-boot-properties-migrator"
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testRuntimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-
+test {
+    systemProperty 'spring.profiles.active', 'gcp'
+}
 
 tasks.named('test') {
     useJUnitPlatform()

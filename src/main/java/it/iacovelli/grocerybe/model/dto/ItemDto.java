@@ -16,7 +16,7 @@ public class ItemDto implements Serializable {
 
     private UUID id;
 
-    private String userId;
+    private UUID pantryId;
 
     private String vendor;
 

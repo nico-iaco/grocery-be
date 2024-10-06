@@ -21,7 +21,9 @@ public class Item {
     @Column(columnDefinition = "UUID")
     private UUID id;
 
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "pantryId")
+    private Pantry pantry;
 
     private String vendor;
 

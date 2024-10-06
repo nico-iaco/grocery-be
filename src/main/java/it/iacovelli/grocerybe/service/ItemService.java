@@ -13,22 +13,22 @@ import java.util.UUID;
 
 public interface ItemService {
 
-    ItemDto addItem(ItemDto itemDto) throws ItemBarcodeAlreadyExistsException;
+    ItemDto addItem(ItemDto itemDto, String userId) throws ItemBarcodeAlreadyExistsException;
 
-    void addAllItems(List<ShoppingItemDto> shoppingItemList, String userid) throws ItemBarcodeAlreadyExistsException;
+    void addAllItems(List<ShoppingItemDto> shoppingItemList, String userid, UUID pantryId) throws ItemBarcodeAlreadyExistsException;
 
-    List<ItemDto> getAllItems(boolean onlyAvailable, String userId);
+    List<ItemDto> getAllItems(boolean onlyAvailable, String userId, UUID pantryId);
 
-    ItemDto getItem(UUID id, String userid) throws ItemNotFoundException;
+    ItemDto getItem(UUID id, String userid, UUID pantryId) throws ItemNotFoundException;
 
-    ItemDto updateItem(UUID id, ItemDto itemDto, String userid) throws ItemNotFoundException;
+    ItemDto updateItem(UUID id, ItemDto itemDto, String userid, UUID pantryId) throws ItemNotFoundException;
 
-    void deleteItem(UUID id, String userid) throws ItemNotFoundException;
+    void deleteItem(UUID id, String userid, UUID pantryId) throws ItemNotFoundException;
 
-    FoodDetailDto getFoodDetail(UUID itemId, String userid) throws ItemNotFoundException, FoodDetailsNotAvailableException;
+    FoodDetailDto getFoodDetail(UUID itemId, String userid, UUID pantryId) throws ItemNotFoundException, FoodDetailsNotAvailableException;
 
-    float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid) throws ItemNotFoundException;
+    float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid, UUID pantryId) throws ItemNotFoundException;
 
-    ItemStatisticWrapperDto getItemsStatistic(String userid);
+    ItemStatisticWrapperDto getItemsStatistic(String userid, UUID pantryId);
 
 }

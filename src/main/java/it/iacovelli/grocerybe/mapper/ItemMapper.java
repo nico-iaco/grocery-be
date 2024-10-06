@@ -1,6 +1,7 @@
 package it.iacovelli.grocerybe.mapper;
 
 import it.iacovelli.grocerybe.model.Item;
+import it.iacovelli.grocerybe.model.Pantry;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
@@ -21,17 +22,19 @@ public abstract class ItemMapper {
     @Mapping(target = "nextExpirationDate", ignore = true)
     @Mapping(target = "quantity", ignore = true)
     @Mapping(target = "unit", ignore = true)
+    @Mapping(target = "pantryId", source = "pantry.id")
     @Mapping(target = "availableQuantity", ignore = true)
     public abstract ItemDto entityToDto(Item item);
 
     @Mapping(target = "foodDetail", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "pantry", ignore = true)
     @Mapping(target = "transactionList", ignore = true)
     public abstract Item dtoToEntity(ItemDto itemDto);
 
     @Mapping(target = "foodDetail", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "pantry", ignore = true)
     @Mapping(target = "transactionList", ignore = true)
     public abstract void updateItem(ItemDto itemDto, @MappingTarget Item item);
 
