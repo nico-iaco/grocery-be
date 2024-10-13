@@ -42,14 +42,15 @@ jobs:
               with:
                   java-version: '21'
                   distribution: 'temurin'
-            - name: Setup Gradle
+            - name: Setup Gradle and execute 'bootBuildImage' task
               uses: gradle/actions/setup-gradle@v3
               with:
                   gradle-version: "current"
-            - name: Execute Gradle bootBuildImage task
-              run: ./gradlew -Dspring.profiles.active=gcp bootBuildImage --imageName=$IMAGE_NAME:latest
-              env:
-                  SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
+                  arguments: bootBuildImage -Dspring.profiles.active=gcp --imageName=$IMAGE_NAME:latest
+#            - name: Execute Gradle bootBuildImage task
+#              run: gradle -Dspring.profiles.active=gcp bootBuildImage --imageName=$IMAGE_NAME:latest
+#              env:
+#                  SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
             - name: Configure Docker Client
               run: |-
                   gcloud auth configure-docker $LOCATION --quiet
