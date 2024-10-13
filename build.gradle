@@ -24,15 +24,8 @@ repositories {
 bootBuildImage {
     environment = [
             'BP_BINARY_COMPRESSION_METHOD': 'upx',
+            'BP_JVM_VERSION': '21',
     ]
-}
-
-graalvmNative {
-    binaries {
-        main {
-            buildArgs.add('--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback,org.apache.commons.logging.LogFactory,org.slf4j.MDC,org.apache.commons.logging.LogFactoryService')
-        }
-    }
 }
 
 
