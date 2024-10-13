@@ -46,10 +46,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: "current"
-          arguments: bootBuildImage -Dspring.profiles.active=gcp --imageName=$IMAGE_NAME:latest
+          arguments: bootBuildImage -Dspring.profiles.active=gcp --imageName=${{ env.IMAGE_NAME }}:latest
         env:
           SHORT_SHA: ${{ steps.short-sha.outputs.sha }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
       #            - name: Execute Gradle bootBuildImage task
       #              run: gradle -Dspring.profiles.active=gcp bootBuildImage --imageName=$IMAGE_NAME:latest
       #              env:
