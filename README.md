@@ -4,9 +4,12 @@
 
 ## Description
 
-This app is like an inventory for your groceries. You can track your groceries and their expiration dates. You can also add new items to your inventory.
-When used with [food-track-be](https://github.com/nico-iaco/food-track-be) you can track your food usage and see how much you have left. 
-This app use [food-details-integrator-be](https://github.com/nico-iaco/food-details-integrator-be) to retrive additional information about the food like nutritional details.
+This app is like an inventory for your groceries. You can track your groceries and their expiration dates. You can also
+add new items to your inventory.
+When used with [food-track-be](https://github.com/nico-iaco/food-track-be) you can track your food usage and see how
+much you have left.
+This app use [food-details-integrator-be](https://github.com/nico-iaco/food-details-integrator-be) to retrive additional
+information about the food like nutritional details.
 
 ## Features
 
@@ -43,6 +46,7 @@ docker run -p 8080:8080 ghcr.io/nico-iaco/grocery-be:latest -e {All the environm
 | Name                  | Description                              | Default value         |
 |-----------------------|------------------------------------------|-----------------------|
 | DB_URL                | The host of the database                 |                       |
+| DB_PORT               | The port of the database                 |                       |
 | DB_USER               | The user of the database                 |                       |
 | DB_PASSWORD           | The password of the database             |                       |
 | DB_NAME               | The name of the database                 |                       |
@@ -58,19 +62,30 @@ The database is created automatically by the application. The database is create
 - food_detail
 
 This is the schema of the database:
-![Database schema](./docs/groceryBeErDiagram.png)
+![Database schema](./docs/groceryBeERSchema.png)
 
 However, here is the DDL for the database:
 
 ```sql
+create table pantry
+(
+    id          uuid not null
+        primary key,
+    description varchar(255),
+    name        varchar(255)
+);
+
 create table item
 (
-    id      uuid not null
+    id        uuid not null
         primary key,
-    user_id uuid not null,
-    vendor  varchar(255),
-    barcode varchar(255),
-    name    varchar(255)
+    barcode   varchar(255),
+    name      varchar(255),
+    user_id   varchar(255),
+    vendor    varchar(255),
+    pantry_id uuid
+        constraint fkiv459qrocp55s73hh0dmtwsmp
+            references pantry
 );
 
 create table transaction
@@ -78,16 +93,17 @@ create table transaction
     id                 uuid                       not null
         primary key,
     expiration_date    date,
-    purchase_date      date,
     price              double precision           not null,
     quantity           double precision           not null,
-    quantity_std       double precision           not null,
-    available_quantity double precision           not null,
     unit               varchar(255),
-    seller             varchar(255),
+    vendor             varchar(255),
     item_id            uuid
         constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
-            references item
+            references item,
+    available_quantity double precision default 0 not null,
+    purchase_date      date,
+    quantity_std       double precision           not null,
+    seller             varchar(255)
 );
 
 create table item_transaction_list
@@ -102,17 +118,24 @@ create table item_transaction_list
             references transaction
 );
 
+
 create table food_detail
 (
-    id          uuid not null
+    id                  uuid not null
         primary key,
-    item_id     uuid
+    item_id             uuid
         constraint fk3ibvxnlgyfslk9tm8vfcfqb0f
             references item,
-    generic_name varchar(255),
+    generic_name        varchar(255),
     image_nutrition_url varchar(255),
-    image_url varchar(255)
-)
+    image_url           varchar(255)
+);
 
+create table user_pantry
+(
+    pantry_id uuid         not null references pantry,
+    user_id   varchar(255) not null,
+    primary key (pantry_id, user_id)
+);
 
 ```
