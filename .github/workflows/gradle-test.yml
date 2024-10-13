@@ -29,4 +29,5 @@ jobs:
             - name: Setup and execute Gradle 'test' task
               uses: gradle/actions/setup-gradle@v3
               with:
+                  gradle-version: "current"
                   arguments: test
