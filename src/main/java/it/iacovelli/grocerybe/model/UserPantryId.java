@@ -15,9 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserPantryId implements Serializable {
 
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private String userId;
 
-    @JoinColumn(name = "pantryId")
+    @JoinColumn(name = "pantry_id")
     private UUID pantryId;
 }

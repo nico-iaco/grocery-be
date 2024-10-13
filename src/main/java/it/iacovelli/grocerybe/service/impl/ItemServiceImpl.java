@@ -3,6 +3,7 @@ package it.iacovelli.grocerybe.service.impl;
 import it.iacovelli.grocerybe.exception.FoodDetailsNotAvailableException;
 import it.iacovelli.grocerybe.exception.ItemBarcodeAlreadyExistsException;
 import it.iacovelli.grocerybe.exception.ItemNotFoundException;
+import it.iacovelli.grocerybe.exception.PantryNotFoundException;
 import it.iacovelli.grocerybe.mapper.FoodDetailMapper;
 import it.iacovelli.grocerybe.mapper.ItemMapper;
 import it.iacovelli.grocerybe.model.FoodDetail;
@@ -53,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
 
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userId, itemDto.getPantryId());
 
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         if (itemRepository.countItemsByBarcodeAndPantry(itemDto.getBarcode(), pantry) > 0) {
             throw new ItemBarcodeAlreadyExistsException("Barcode already exists, check if the information is correct");
         }
@@ -76,19 +77,18 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllItems(boolean onlyAvailable, String userId, UUID pantryId) {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userId, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
-        List<ItemDto> itemsDtoList = itemRepository.findAllByPantry(pantry)
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
+        return itemRepository.findAllByPantry(pantry)
                 .stream()
                 .map(itemMapper::entityToDto)
                 .filter(item -> !onlyAvailable || item.getAvailableQuantity() > 0)
                 .toList();
-        return itemsDtoList;
     }
 
     @Override
     public ItemDto getItem(UUID id, String userid, UUID pantryId) throws ItemNotFoundException {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userid, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         Item item = itemRepository.findItemByIdAndPantry(id, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         return itemMapper.entityToDto(item);
     }
@@ -96,7 +96,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(UUID id, ItemDto itemDto, String userid, UUID pantryId) throws ItemNotFoundException {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userid, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         Item item = itemRepository.findItemByIdAndPantry(id, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         itemMapper.updateItem(itemDto, item);
         return itemMapper.entityToDto(itemRepository.save(item));
@@ -106,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteItem(UUID id, String userid, UUID pantryId) throws ItemNotFoundException {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userid, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         Item item = itemRepository.findItemByIdAndPantry(id, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
         if (item.getFoodDetail() != null) {
             foodDetailRepository.delete(item.getFoodDetail());
@@ -121,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public FoodDetailDto getFoodDetail(UUID itemId, String userid, UUID pantryId) throws ItemNotFoundException, FoodDetailsNotAvailableException {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userid, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         Item item = itemRepository.findItemByIdAndPantry(itemId, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
 
         Optional<FoodDetail> optionalFoodDetail = foodDetailRepository.findFoodDetailByItem(item);
@@ -143,7 +143,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public float getKcalConsumedForItemAndQuantity(UUID itemId, float quantity, String userid, UUID pantryId) throws ItemNotFoundException {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userid, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         Item item = itemRepository.findItemByIdAndPantry(itemId, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
 
         return foodDetailsIntegratorService.getKcalConsumed(item.getBarcode(), quantity);
@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemStatisticWrapperDto getItemsStatistic(String userid, UUID pantryId) {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(userid, pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         ItemStatisticWrapperDto itemStatisticWrapperDto = new ItemStatisticWrapperDto();
         LocalDate nowPlusOneWeek = LocalDate.now().plusWeeks(1);
         List<ItemDto> itemsInExpiration = itemRepository.findItemsInExpiration(nowPlusOneWeek, pantry).stream().map(itemMapper::entityToDto).toList();

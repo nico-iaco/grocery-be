@@ -2,7 +2,7 @@
 name: Build and Push Image to Google Cloud Platform
 on:
     push:
-        branches: [ gcp ]
+        branches: [ master ]
         paths-ignore:
             - 'k8s/**'
             - '.github/workflows/gradle-test.yml'

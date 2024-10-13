@@ -21,6 +21,6 @@ public interface PantryService {
 
     void deletePantry(UUID pantryId, String userId);
 
-    void sharePantry(UUID pantryId, String userId);
+    PantryDto sharePantry(UUID pantryId, String userId);
 
 }

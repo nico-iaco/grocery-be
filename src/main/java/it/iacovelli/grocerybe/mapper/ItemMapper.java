@@ -1,7 +1,6 @@
 package it.iacovelli.grocerybe.mapper;
 
 import it.iacovelli.grocerybe.model.Item;
-import it.iacovelli.grocerybe.model.Pantry;
 import it.iacovelli.grocerybe.model.dto.ItemDto;
 import it.iacovelli.grocerybe.repository.TransactionRepository;
 import jakarta.transaction.Transactional;

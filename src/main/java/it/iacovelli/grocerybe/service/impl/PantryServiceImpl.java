@@ -1,5 +1,6 @@
 package it.iacovelli.grocerybe.service.impl;
 
+import it.iacovelli.grocerybe.exception.PantryNotFoundException;
 import it.iacovelli.grocerybe.mapper.PantryMapper;
 import it.iacovelli.grocerybe.model.Pantry;
 import it.iacovelli.grocerybe.model.UserPantry;
@@ -30,7 +31,7 @@ public class PantryServiceImpl implements PantryService {
     @Transactional
     public List<PantryDto> getUserPantries(String userId) {
         return userPantryRepository.findAllById_UserId(userId).stream()
-                .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()).orElseThrow())
+                .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()).orElseThrow(() -> new PantryNotFoundException("Pantry not found")))
                 .map(pantryMapper::entityToDto).toList();
     }
 
@@ -38,14 +39,16 @@ public class PantryServiceImpl implements PantryService {
     @Transactional
     public Optional<Pantry> getPantryById(String userId, UUID pantryId) {
         return userPantryRepository.findById(new UserPantryId(userId, pantryId))
-                .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()).orElseThrow());
+                .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()))
+                .orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
     }
 
     @Override
     @Transactional
     public Optional<Pantry> getPantryById(UUID pantryId) {
         return userPantryRepository.findDistinctById_PantryId(pantryId)
-                .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()).orElseThrow());
+                .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()))
+                .orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
     }
 
     @Override
@@ -62,7 +65,7 @@ public class PantryServiceImpl implements PantryService {
 
     @Override
     public PantryDto updatePantry(UUID pantryId, PantryDto pantryDto, String userId) {
-        Pantry pantry = pantryRepository.findById(pantryId).orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = pantryRepository.findById(pantryId).orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         pantryMapper.updatePantry(pantryDto, pantry);
         pantryRepository.save(pantry);
         return pantryMapper.entityToDto(pantry);
@@ -75,12 +78,13 @@ public class PantryServiceImpl implements PantryService {
     }
 
     @Override
-    public void sharePantry(UUID pantryId, String userId) {
-        Pantry pantry = pantryRepository.findById(pantryId).orElseThrow(() -> new RuntimeException("Pantry not found"));
+    public PantryDto sharePantry(UUID pantryId, String userId) {
+        Pantry pantry = pantryRepository.findById(pantryId).orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
         UserPantryId userPantryId = new UserPantryId(userId, pantry.getId());
         UserPantry userPantry = new UserPantry();
         userPantry.setId(userPantryId);
         userPantryRepository.save(userPantry);
+        return pantryMapper.entityToDto(pantry);
     }
 
 }

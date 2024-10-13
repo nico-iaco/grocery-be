@@ -1,6 +1,7 @@
 package it.iacovelli.grocerybe.service.impl;
 
 import it.iacovelli.grocerybe.exception.ItemNotFoundException;
+import it.iacovelli.grocerybe.exception.PantryNotFoundException;
 import it.iacovelli.grocerybe.mapper.TransactionMapper;
 import it.iacovelli.grocerybe.model.Item;
 import it.iacovelli.grocerybe.model.Pantry;
@@ -14,7 +15,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,12 +43,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionDto> getItemTransactions(UUID itemId, boolean onlyAvailable, UUID pantryId) {
         Item item = getItemFromId(itemId, pantryId);
-        List<TransactionDto> transactionDtoList = transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item)
+        return transactionRepository.findTransactionsByItemOrderByExpirationDateAsc(item)
                 .stream()
                 .filter(transaction -> !onlyAvailable || transaction.getAvailableQuantity() > 0)
                 .map(transactionMapper::entityToDto)
                 .toList();
-        return transactionDtoList;
     }
 
     @Override
@@ -81,7 +80,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Item getItemFromId(UUID itemId, UUID pantryId) {
         Optional<Pantry> optionalPantry = pantryService.getPantryById(pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new RuntimeException("Pantry not found"));
+        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("The pantry was not found"));
         return itemRepository.findItemByIdAndPantry(itemId, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
     }
 }
