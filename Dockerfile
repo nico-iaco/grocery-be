@@ -1,9 +1,9 @@
-FROM ghcr.io/nico-iaco/graalvm-gradle-docker-build:v1.1.0 as builder
+FROM ghcr.io/graalvm/native-image-community:23-ol9 as builder
 WORKDIR /app
 
 COPY . .
 
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && gradle -Dspring.profiles.active=default nativeCompile
+RUN ./gradlew -Dspring.profiles.active=default nativeCompile
 
 FROM oraclelinux:9-slim
 WORKDIR /app
