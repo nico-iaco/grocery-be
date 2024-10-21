@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@RegisterReflectionForBinding({UUID[].class})
 public class Pantry {
 
     @Id

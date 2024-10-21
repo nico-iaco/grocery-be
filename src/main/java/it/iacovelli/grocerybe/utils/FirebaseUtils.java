@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("gcp")
 public class FirebaseUtils {
 
     private final Log LOGGER = LogFactory.getLog(FirebaseUtils.class);
