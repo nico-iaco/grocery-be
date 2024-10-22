@@ -1,4 +1,6 @@
 FROM ghcr.io/graalvm/native-image-community:23-ol9 as builder
+RUN microdnf install findutils
+
 WORKDIR /app
 
 COPY . .

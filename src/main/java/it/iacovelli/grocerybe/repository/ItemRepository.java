@@ -16,8 +16,10 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
 
     List<Item> findAllByPantry(Pantry pantry);
 
+    @Query("SELECT COUNT(i) FROM Item i WHERE i.barcode = :barcode AND i.pantry = :pantry")
     int countItemsByBarcodeAndPantry(@Param("barcode") String barcode, @Param("pantry") Pantry pantry);
 
+    @Query("SELECT i FROM Item i WHERE i.id = :id AND i.pantry = :pantry")
     Optional<Item> findItemByIdAndPantry(@Param("id") UUID id, @Param("pantry") Pantry pantry);
 
     Optional<Item> findItemByBarcode(@Param("barcode") String barcode);
