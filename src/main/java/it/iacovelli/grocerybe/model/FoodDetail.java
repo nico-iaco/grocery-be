@@ -7,7 +7,7 @@ import lombok.ToString;
 
 import java.util.UUID;
 
-@Entity
+@Entity(name = "food_detail")
 @Getter
 @Setter
 @ToString

@@ -22,7 +22,7 @@ public class Item {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "pantryId")
+    @JoinColumn(name = "pantry_id")
     private Pantry pantry;
 
     private String vendor;

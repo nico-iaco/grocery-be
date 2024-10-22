@@ -12,8 +12,11 @@ spring:
         defer-datasource-initialization: true
         show-sql: false
         hibernate:
-            ddl-auto: update
-        generate-ddl: true
+            ddl-auto: validate
+        generate-ddl: false
+        properties:
+            hibernate:
+                format_sql: true
     cloud:
         gcp:
             project-id: ${PROJECT_ID}
