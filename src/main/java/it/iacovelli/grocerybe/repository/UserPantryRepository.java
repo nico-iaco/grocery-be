@@ -12,6 +12,8 @@ public interface UserPantryRepository extends JpaRepository<UserPantry, UserPant
 
     List<UserPantry> findAllById_UserId(String userId);
 
-    Optional<UserPantry> findDistinctById_PantryId(UUID pantryId);
+    //Optional<UserPantry> findDistinctById_PantryId(UUID pantryId);
+
+    Optional<UserPantry> findFirstById_PantryId(UUID pantryId);
 
 }

@@ -46,7 +46,7 @@ public class PantryServiceImpl implements PantryService {
     @Override
     @Transactional
     public Optional<Pantry> getPantryById(UUID pantryId) {
-        return userPantryRepository.findDistinctById_PantryId(pantryId)
+        return userPantryRepository.findFirstById_PantryId(pantryId)
                 .map(userPantry -> pantryRepository.findById(userPantry.getId().getPantryId()))
                 .orElseThrow(() -> new PantryNotFoundException("Pantry not found"));
     }
