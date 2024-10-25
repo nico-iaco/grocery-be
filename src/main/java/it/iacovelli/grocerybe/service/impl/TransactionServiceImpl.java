@@ -79,8 +79,15 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Item getItemFromId(UUID itemId, UUID pantryId) {
-        Optional<Pantry> optionalPantry = pantryService.getPantryById(pantryId);
-        Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("The pantry was not found"));
-        return itemRepository.findItemByIdAndPantry(itemId, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+        Item result = null;
+        if (pantryId != null) {
+            Optional<Pantry> optionalPantry = pantryService.getPantryById(pantryId);
+            Pantry pantry = optionalPantry.orElseThrow(() -> new PantryNotFoundException("The pantry was not found"));
+            result = itemRepository.findItemByIdAndPantry(itemId, pantry).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+        } else {
+            result = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("The item was not found"));
+        }
+
+        return result;
     }
 }

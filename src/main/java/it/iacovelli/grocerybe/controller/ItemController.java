@@ -181,7 +181,7 @@ public class ItemController extends BaseController {
     @GetMapping("/{itemId}/transaction/{transactionId}")
     public BaseResponse<TransactionDto> getItemTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable UUID itemId,
                                                            @Parameter(description = "id of the transaction searched") @PathVariable UUID transactionId,
-                                                           @RequestParam UUID pantryId,
+                                                           @RequestParam(required = false) UUID pantryId,
                                                            @RequestHeader("Authorization") String token) {
         String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         TransactionDto itemTransaction = transactionService.getItemTransaction(itemId, transactionId, pantryId);
@@ -194,7 +194,7 @@ public class ItemController extends BaseController {
     @PatchMapping("/{id}/transaction")
     public BaseResponse<TransactionDto> updateTransaction(@Parameter(description = "id of the item to which the transaction belongs") @PathVariable("id") UUID itemId,
                                                           @RequestBody TransactionDto transactionDto,
-                                                          @RequestParam UUID pantryId,
+                                                          @RequestParam(required = false) UUID pantryId,
                                                           @RequestHeader("Authorization") String token) {
         String userId = firebaseUtils.verifyTokenAndGetUserid(token);
         TransactionDto dto = transactionService.updateItemTransaction(itemId, transactionDto, pantryId);
